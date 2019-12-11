@@ -26,6 +26,7 @@ begin
 try
 //Application := xApplication;
 //showmessage('dll');
+  if DM = nil then Application.CreateForm(TDM, DM);
   if FmRelatorio = nil then Application.CreateForm(TFmRelatorio, FmRelatorio);
   FmRelatorio.PageControl1.TabIndex := 0;
   FmRelatorio.StTop.Caption := 'Relatório de Vendas';

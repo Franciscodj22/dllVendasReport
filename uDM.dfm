@@ -17,7 +17,6 @@ object DM: TDM
       'Port='
       'UseSSL='
       'DriverID=MySQL')
-    Connected = True
     LoginPrompt = False
     Transaction = FDTrans
     Left = 44
@@ -428,6 +427,7 @@ object DM: TDM
     object QrVendedorID_VENDEDOR: TFDAutoIncField
       FieldName = 'ID_VENDEDOR'
       Origin = 'id'
+      ReadOnly = True
     end
     object QrVendedorCOMISSAO: TFloatField
       AutoGenerateValue = arDefault
