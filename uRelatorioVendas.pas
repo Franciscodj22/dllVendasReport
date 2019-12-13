@@ -77,6 +77,8 @@ type
     StJurosfatura: TStaticText;
     StTotalFaturaBruto: TStaticText;
     Label9: TLabel;
+    Panel4: TPanel;
+    Panel6: TPanel;
     procedure pesquizarVenda;
     procedure FormCreate(Sender: TObject);
     procedure ChbxStatusClick(Sender: TObject);
@@ -96,6 +98,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BtnReceberFaturaClick(Sender: TObject);
     procedure lbeReceberFaturaKeyPress(Sender: TObject; var Key: Char);
+    procedure Panel4Click(Sender: TObject);
+    procedure Panel6Click(Sender: TObject);
   private
     { Private declarations }
 
@@ -290,6 +294,16 @@ end;
 procedure TFmRelatorio.LbFecharClick(Sender: TObject);
 begin
 close;
+end;
+
+procedure TFmRelatorio.Panel4Click(Sender: TObject);
+begin
+BtnAtualizarvaloresFaturaClick(sender);
+end;
+
+procedure TFmRelatorio.Panel6Click(Sender: TObject);
+begin
+BtnReceberFaturaClick(sender);
 end;
 
 procedure TFmRelatorio.pesquizarVenda;

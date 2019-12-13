@@ -36,6 +36,7 @@ Application.MainFormOnTaskBar := False;
    dm.QrCliente.Open('select id, Nome_razao from pessoa where id='+id_cliente.ToString);
    FmRelatorio.PnCliente.Caption := 'Cliente: '+dm.QrCliente.FieldByName('id').text+' - '+dm.QrCliente.FieldByName('nome_razao').Text;
    dm.QrCliente.Close;
+   FmRelatorio.StTop.Caption := 'Faturas do Cliente';
    Fatura_id_cliente := id_cliente.ToString;
    FmRelatorio.DsFatura.DataSet := dm.QrFatura;
    FmRelatorio.BtnAtualizarvaloresFaturaClick(FmRelatorio);

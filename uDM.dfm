@@ -17,7 +17,6 @@ object DM: TDM
       'Port='
       'UseSSL='
       'DriverID=MySQL')
-    Connected = True
     LoginPrompt = False
     Transaction = FDTrans
     Left = 44

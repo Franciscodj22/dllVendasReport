@@ -461,6 +461,7 @@ object FmRelatorio: TFmRelatorio
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
             FFFFFFFFFFFFFFFFFFFFDBECDF55A56A0A7D2874B685FDFEFDFFFFFFFFFFFFFF
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+          Visible = False
           OnClick = BtnAtualizarvaloresFaturaClick
         end
         object BtnReceberFatura: TSpeedButton
@@ -582,6 +583,7 @@ object FmRelatorio: TFmRelatorio
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
           NumGlyphs = 2
+          Visible = False
           OnClick = BtnReceberFaturaClick
         end
         object lbeReceberFatura: TLabeledEdit
@@ -794,6 +796,42 @@ object FmRelatorio: TFmRelatorio
             TabOrder = 2
             Transparent = False
           end
+        end
+        object Panel4: TPanel
+          Left = 24
+          Top = 304
+          Width = 129
+          Height = 41
+          Cursor = crHandPoint
+          Caption = 'Atualizar'
+          Color = clHighlight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -20
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentBackground = False
+          ParentFont = False
+          TabOrder = 4
+          OnClick = Panel4Click
+        end
+        object Panel6: TPanel
+          Left = 230
+          Top = 304
+          Width = 129
+          Height = 41
+          Cursor = crHandPoint
+          Caption = 'Receber '
+          Color = clHighlight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -20
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentBackground = False
+          ParentFont = False
+          TabOrder = 5
+          OnClick = Panel6Click
         end
       end
     end
