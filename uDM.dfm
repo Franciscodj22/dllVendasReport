@@ -17,6 +17,7 @@ object DM: TDM
       'Port='
       'UseSSL='
       'DriverID=MySQL')
+    Connected = True
     LoginPrompt = False
     Transaction = FDTrans
     Left = 44
@@ -193,17 +194,32 @@ object DM: TDM
     Connection = FDCon
     Transaction = FDTrans
     SQL.Strings = (
+      'SET @JurosAoDia = 0.0033;-- = 0,099  ou seja 9,9% ao mes '
       
-        'SELECT p.nome_razao, p.cpf_cnpj, p.logradouro, p.numero, p.bairr' +
-        'o, p.municipio,p.uf,'
+        '  SELECT p.id as id_pessoa, p.nome_razao, p.cpf_cnpj, p.logradou' +
+        'ro, p.numero, p.bairro, p.municipio,p.uf, '
       
-        '       f.data_vencimento, f.valor, f.id_venda, f.id,f.Qde_parcel' +
-        'as, f.parcela_Atual,f.status'
-      '       from'
-      ' pessoa AS p INNER JOIN fatura_cliente AS f'
-      ' ON f.ID_CLIENTE = p.ID      ')
+        ' case when TIMESTAMPDIFF(DAY,data_vencimento, NOW())-1 <0 then 0' +
+        ' ELSE '
+      'TIMESTAMPDIFF(DAY,data_vencimento, NOW())-1 end AS atraso,f.*,'
+      
+        '  case when valor * @JurosAoDia * TIMESTAMPDIFF(DAY,data_vencime' +
+        'nto, NOW())<0 then 0 ELSE '
+      
+        ' Format(valor * @JurosAoDia * TIMESTAMPDIFF(DAY,data_vencimento,' +
+        ' NOW()),3)  end '
+      '   AS Juros FROM  '
+      
+        '  fatura_cliente AS f inner join pessoa as p ON F.ID_CLIENTE=P.I' +
+        'D '
+      '   WHERE f.status=0 and f.ID_CLIENTE=1;')
     Left = 775
     Top = 138
+    object QrFaturaid_pessoa: TFDAutoIncField
+      FieldName = 'id_pessoa'
+      Origin = 'ID'
+      ReadOnly = True
+    end
     object QrFaturanome_razao: TStringField
       FieldName = 'nome_razao'
       Origin = 'NOME_RAZAO'
@@ -246,54 +262,90 @@ object DM: TDM
       Origin = 'UF'
       Size = 2
     end
-    object QrFaturadata_vencimento: TDateField
+    object QrFaturaatraso: TLargeintField
       AutoGenerateValue = arDefault
-      FieldName = 'data_vencimento'
+      FieldName = 'atraso'
+      Origin = 'atraso'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object QrFaturaID: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'ID'
+      Origin = 'ID'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object QrFaturaID_CLIENTE: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'ID_CLIENTE'
+      Origin = 'ID_CLIENTE'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object QrFaturaDATA_COMPRA: TDateField
+      AutoGenerateValue = arDefault
+      FieldName = 'DATA_COMPRA'
+      Origin = 'DATA_COMPRA'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object QrFaturaData_Vencimento: TDateField
+      AutoGenerateValue = arDefault
+      FieldName = 'Data_Vencimento'
       Origin = 'Data_Vencimento'
       ProviderFlags = []
       ReadOnly = True
     end
-    object QrFaturavalor: TFloatField
+    object QrFaturaVALOR: TFloatField
       AutoGenerateValue = arDefault
-      FieldName = 'valor'
+      FieldName = 'VALOR'
       Origin = 'VALOR'
       ProviderFlags = []
       ReadOnly = True
     end
-    object QrFaturaid_venda: TIntegerField
+    object QrFaturaQDE_PARCELAS: TIntegerField
       AutoGenerateValue = arDefault
-      FieldName = 'id_venda'
-      Origin = 'ID_VENDA'
-      ProviderFlags = []
-      ReadOnly = True
-    end
-    object QrFaturaid: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'id'
-      Origin = 'ID'
-      ProviderFlags = [pfInKey]
-      ReadOnly = True
-    end
-    object QrFaturaQde_parcelas: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'Qde_parcelas'
+      FieldName = 'QDE_PARCELAS'
       Origin = 'QDE_PARCELAS'
       ProviderFlags = []
       ReadOnly = True
     end
-    object QrFaturaparcela_Atual: TIntegerField
+    object QrFaturaPARCELA_ATUAL: TIntegerField
       AutoGenerateValue = arDefault
-      FieldName = 'parcela_Atual'
+      FieldName = 'PARCELA_ATUAL'
       Origin = 'PARCELA_ATUAL'
       ProviderFlags = []
       ReadOnly = True
     end
-    object QrFaturastatus: TIntegerField
+    object QrFaturaDIAS_PRAZO: TIntegerField
       AutoGenerateValue = arDefault
-      FieldName = 'status'
+      FieldName = 'DIAS_PRAZO'
+      Origin = 'DIAS_PRAZO'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object QrFaturaID_VENDA: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'ID_VENDA'
+      Origin = 'ID_VENDA'
+      ProviderFlags = []
+      ReadOnly = True
+    end
+    object QrFaturaSTATUS: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'STATUS'
       Origin = '`STATUS`'
       ProviderFlags = []
       ReadOnly = True
+    end
+    object QrFaturaJuros: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'Juros'
+      Origin = 'Juros'
+      ProviderFlags = []
+      ReadOnly = True
+      Size = 62
     end
   end
   object DsCDSdm: TDataSource

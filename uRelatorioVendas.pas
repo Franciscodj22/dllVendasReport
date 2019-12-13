@@ -17,7 +17,7 @@ type
     DBGrid1: TDBGrid;
     TabSheet2: TTabSheet;
     PnTop: TPanel;
-    Panel4: TPanel;
+    PnPesquisa: TPanel;
     DsVenda: TDataSource;
     cbxStatus: TComboBox;
     DBLookupComboBox1: TDBLookupComboBox;
@@ -64,6 +64,19 @@ type
     ActivityIndicator1: TActivityIndicator;
     StInformacao: TStaticText;
     BtnImprimirVenda: TSpeedButton;
+    TabSheet4: TTabSheet;
+    BtnAtualizarvaloresFatura: TSpeedButton;
+    BtnReceberFatura: TSpeedButton;
+    lbeReceberFatura: TLabeledEdit;
+    DBGrid3: TDBGrid;
+    StTroco: TStaticText;
+    Panel3: TPanel;
+    Label7: TLabel;
+    Label8: TLabel;
+    StValorTotalFaturaLiquido: TStaticText;
+    StJurosfatura: TStaticText;
+    StTotalFaturaBruto: TStaticText;
+    Label9: TLabel;
     procedure pesquizarVenda;
     procedure FormCreate(Sender: TObject);
     procedure ChbxStatusClick(Sender: TObject);
@@ -78,6 +91,11 @@ type
     procedure BtnConsultanotaClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure BtnImprimirVendaClick(Sender: TObject);
+    procedure DBGrid3CellClick(Column: TColumn);
+    procedure BtnAtualizarvaloresFaturaClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BtnReceberFaturaClick(Sender: TObject);
+    procedure lbeReceberFaturaKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
 
@@ -139,6 +157,54 @@ begin
 pesquizarVenda;
 end;
 
+procedure TFmRelatorio.BtnReceberFaturaClick(Sender: TObject);
+var
+Recebido, TotalAPagar ,Restante,f: currency;
+  I: Integer;
+  SqlPagamentoParcial : string;
+begin
+
+lbeReceberFatura.SetFocus;
+if dm.QrFatura.RecordCount=0 then raise Exception.Create('Nã há faturas pendentes desse cliente');
+
+if lbeReceberFatura.Text='' then raise Exception.Create('Informe o Valor');
+if application.MessageBox('Confirmar Recebimento da Fatura ?','',mb_iconquestion+mb_yesno)=idno then exit;
+
+Recebido := strtocurr(stringreplace(lbeReceberFatura.Text,'.','',[]));
+TotalAPagar := strtocurr(stringreplace(StTotalFaturaBruto.Caption,'.','',[]));
+if recebido>=TotalAPagar then//o recebido da pra pagar a fatura completa
+ begin
+ dm.ExecutaQuery('update fatura_cliente set status=1 where status=0 and id_cliente='+dm.QrFaturaID_CLIENTE.Text);
+ StTroco.Caption := 'Troco: R$'+formatfloat('00.00',recebido-TotalAPagar);
+  end else //o recebido não da pra pagar a fatura completa
+   begin
+      Restante := Recebido;
+   for I := 1 to dm.QrFatura.RecordCount do
+    begin
+    dm.QrFatura.RecNo := i;
+    f := dm.QrFaturaVALOR.Value+strtocurr(stringreplace(dm.QrFaturaJuros.Text,'.',',',[]));
+    if Restante>=f then
+      begin
+    SqlPagamentoParcial :=
+    SqlPagamentoParcial+'update fatura_cliente set status=1 where id='+dm.QrFaturaID.Text+';'+#13;
+      Restante := Restante-f;
+      end else//nao da pra pagar a fatura do id selecionado
+       begin
+       SqlPagamentoParcial :=
+    SqlPagamentoParcial+'update fatura_cliente set valor='+stringreplace(currtostr(
+    dm.QrFaturaVALOR.Value-restante),',','.',[])
+    +' where id='+dm.QrFaturaID.Text+';'+#13;
+       Restante := 0;
+       end;
+       if Restante<=0 then break;
+    end;//fim  do loop
+
+    dm.ExecutaQuery(SqlPagamentoParcial);
+   end;
+
+  BtnAtualizarvaloresFaturaClick(sender);
+end;
+
 procedure TFmRelatorio.CbxQdeParcelasChange(Sender: TObject);
 begin
 LbVlParcela.Caption := formatfloat('0.00',Fatura_Valor/strtocurr(TCombobox(sender).Text));
@@ -148,6 +214,22 @@ procedure TFmRelatorio.ChbxStatusClick(Sender: TObject);
 begin
 if TCheckBox(sender).Checked then
 cbxStatus.DroppedDown := cbxStatus.ItemIndex = -1;
+end;
+
+procedure TFmRelatorio.DBGrid3CellClick(Column: TColumn);
+var aSQL : string;
+begin
+aSQL := 'SET @JurosAoDia = 0.0033;-- = 0,099  ou seja 9,9% ao mes'+#13+
+  'SELECT p.id, p.nome_razao, p.cpf_cnpj, p.logradouro, p.numero, p.bairro, p.municipio,p.uf,'+#13+
+'  case when TIMESTAMPDIFF(DAY,data_vencimento, NOW())-1 <0 then 0 ELSE'+#13+
+' TIMESTAMPDIFF(DAY,data_vencimento, NOW())-1 end AS atraso,fc.*,'+
+ ' case when valor * @JurosAoDia * TIMESTAMPDIFF(DAY,data_vencimento, NOW())<0 then 0 ELSE'+#13+
+ 'Format(valor * @JurosAoDia * TIMESTAMPDIFF(DAY,data_vencimento, NOW()),3)  end'+
+  ' AS Juros FROM '+#13+
+  'fatura_cliente AS fc inner join pessoa as p ON FC.ID_CLIENTE=P.ID'+#13+
+  ' WHERE fc.status=0 and fc.ID_CLIENTE=1';
+
+
 end;
 
 procedure TFmRelatorio.EdtValorEntradaChange(Sender: TObject);
@@ -166,6 +248,12 @@ procedure TFmRelatorio.EdtValorEntradaKeyPress(Sender: TObject; var Key: Char);
 begin
 if not (key in['0'..'9',#13,#8,#27,',']) then key := #0;
 
+end;
+
+procedure TFmRelatorio.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+action := cafree;
+FmRelatorio := nil;
 end;
 
 procedure TFmRelatorio.FormCreate(Sender: TObject);
@@ -187,6 +275,15 @@ begin
 if key = vk_F12 then
 if Fatura_Valor>0 then 
  btnCriarCarneClick(sender);
+
+end;
+
+procedure TFmRelatorio.lbeReceberFaturaKeyPress(Sender: TObject; var Key: Char);
+begin
+if not(key in['0'..'9',',',#13,#8]) then key := #0;
+if (key=',')and(pos(',',lbeReceberFatura.Text)>0) then key := #0;
+if key = #13 then BtnReceberFaturaClick(sender);
+
 
 end;
 
@@ -248,6 +345,18 @@ if (dm.QrNFCe.RecordCount=0)or(not FileExists(dm.QrNFCe.FieldByName('path_nota')
     ' | Protocolo: '+l.Values['Protocolo'];
     showmessage(l.Text);
     PageControl1.TabIndex := 0;
+end;
+
+procedure TFmRelatorio.BtnAtualizarvaloresFaturaClick(Sender: TObject);
+var
+vTotal, tJuros : currency;
+begin
+dm.ProcuraFatura('where f.status=0 and f.id_cliente='+Fatura_id_cliente);
+dm.CalcularFaturaTotaleJuros(vTotal, tJuros);
+StValorTotalFaturaLiquido.Caption :=  formatfloat('00.00',vTotal);
+StJurosfatura.Caption :=  formatfloat('00.00',tJuros);
+StTotalFaturaBruto.Caption := formatfloat('0.00',tjuros+vTotal);
+ lbeReceberFatura.Clear;
 end;
 
 procedure TFmRelatorio.SpeedButton2Click(Sender: TObject);

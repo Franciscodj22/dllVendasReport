@@ -90,7 +90,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <DCC_ExeOutput>..\binvendas</DCC_ExeOutput>
-        <Debugger_HostApplication>D:\Note_Rosa\documents\binVendas\Vendas.exe</Debugger_HostApplication>
+        <Debugger_HostApplication>D:\Note_Rosa\documents\binVendas\VCadastro.exe</Debugger_HostApplication>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>C:\Users\Francisco informatic\Documents\Embarcadero\Studio\Projects\(None)</Manifest_File>

@@ -21,11 +21,39 @@ uses
   LibConfigNFE in '..\Vendas\units\LibConfigNFE.pas';
 
 {$R *.res}
+Procedure VerFaturas(XHandle : THandle;ID_Cliente: integer = 0);stdcall;
+begin
+Application.Handle := XHandle;
+Application.MainFormOnTaskBar := False;
+         try
+  if DM = nil then Application.CreateForm(TDM, DM);
+  if FmRelatorio = nil then Application.CreateForm(TFmRelatorio, FmRelatorio);
+   try  FmRelatorio.pnpesquisa.visible := false;
+   except
+   //
+    end;
+   FmRelatorio.PageControl1.TabIndex := 3;
+   dm.QrCliente.Open('select id, Nome_razao from pessoa where id='+id_cliente.ToString);
+   FmRelatorio.PnCliente.Caption := 'Cliente: '+dm.QrCliente.FieldByName('id').text+' - '+dm.QrCliente.FieldByName('nome_razao').Text;
+   dm.QrCliente.Close;
+   Fatura_id_cliente := id_cliente.ToString;
+   FmRelatorio.DsFatura.DataSet := dm.QrFatura;
+   FmRelatorio.BtnAtualizarvaloresFaturaClick(FmRelatorio);
+   FmRelatorio.ShowModal;
+         finally
+          if dm<>nil then freeandnil(dm);
+        { FmRelatorio.Release; }
+         end;
+end;
+exports
+VerFaturas;
+
 procedure ListarVendas(XHandle : THandle;idEmpresa : integer;Terminal : integer = 0);
 begin
 try
-//Application := xApplication;
-//showmessage('dll');
+Application.Handle := XHandle;
+Application.MainFormOnTaskBar := False;
+
   if DM = nil then Application.CreateForm(TDM, DM);
   if FmRelatorio = nil then Application.CreateForm(TFmRelatorio, FmRelatorio);
   FmRelatorio.PageControl1.TabIndex := 0;
@@ -45,7 +73,6 @@ try
 finally
 if dm<>nil then freeandnil(dm);
 
-FmRelatorio.Release;
   //freeandnil(FmRelatorio);
 end;
 end;
@@ -68,7 +95,7 @@ try
       FmRelatorio.EdtValorEntrada.Text := '0,00';
      FmRelatorio.StTop.Color := $00860B20;
      Fatura_data_compra := DataCompra;
-     FmRelatorio.Panel4.Hide;
+     FmRelatorio.PnPesquisa.Hide;
      //showmessage('Quick= '+inttostr(integer(Quick))+' | fat: '+currtostr(Fatura_Valor));
      aQuick := QuiCk;
    //if FormPreviewReport <> nil then FmRelatorio.frxReport1.PreviewForm := FormPreviewReport;
@@ -82,4 +109,5 @@ end;
 end;
 exports
 GerarFatura;
+
 end.

@@ -59,20 +59,6 @@ type
     QrPagamentoFORMA_PAGAMENTO: TStringField;
     QrPagamentoDATA_PAGAMENTO: TSQLTimeStampField;
     QrPagamentocodigo_pgt: TIntegerField;
-    QrFaturanome_razao: TStringField;
-    QrFaturacpf_cnpj: TStringField;
-    QrFaturalogradouro: TStringField;
-    QrFaturanumero: TStringField;
-    QrFaturabairro: TStringField;
-    QrFaturamunicipio: TStringField;
-    QrFaturauf: TStringField;
-    QrFaturadata_vencimento: TDateField;
-    QrFaturavalor: TFloatField;
-    QrFaturaid_venda: TIntegerField;
-    QrFaturaid: TIntegerField;
-    QrFaturaQde_parcelas: TIntegerField;
-    QrFaturaparcela_Atual: TIntegerField;
-    QrFaturastatus: TIntegerField;
     QrVendedor: TFDQuery;
     QrVendedorID_VENDEDOR: TFDAutoIncField;
     QrVendedorCOMISSAO: TFloatField;
@@ -80,6 +66,26 @@ type
     QrVendedorID_EMPRESA: TIntegerField;
     QrVendedorNOME_RAZAO: TStringField;
     QrVendedorAPELIDO_FANTASIA: TStringField;
+    QrFaturaid_pessoa: TFDAutoIncField;
+    QrFaturanome_razao: TStringField;
+    QrFaturacpf_cnpj: TStringField;
+    QrFaturalogradouro: TStringField;
+    QrFaturanumero: TStringField;
+    QrFaturabairro: TStringField;
+    QrFaturamunicipio: TStringField;
+    QrFaturauf: TStringField;
+    QrFaturaatraso: TLargeintField;
+    QrFaturaID: TIntegerField;
+    QrFaturaID_CLIENTE: TIntegerField;
+    QrFaturaDATA_COMPRA: TDateField;
+    QrFaturaData_Vencimento: TDateField;
+    QrFaturaVALOR: TFloatField;
+    QrFaturaQDE_PARCELAS: TIntegerField;
+    QrFaturaPARCELA_ATUAL: TIntegerField;
+    QrFaturaDIAS_PRAZO: TIntegerField;
+    QrFaturaID_VENDA: TIntegerField;
+    QrFaturaSTATUS: TIntegerField;
+    QrFaturaJuros: TStringField;
     procedure QrItensQDEGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
     procedure ProcessoParalelo(procedimento : TProc);
@@ -95,6 +101,7 @@ type
     function StrToCurrSemPonto(valor: string): currency;
     function ConectaAoBanco: boolean;
     procedure ProcuraFatura(CondicaoSQl : string);
+    procedure CalcularFaturaTotaleJuros(out Total, TotalJuros: currency);
 
 
   private
@@ -124,11 +131,20 @@ CONST sqlVendedor = 'select v.id as ID_VENDEDOR, v.COMISSAO, v.ID_PESSOA,'+#13+
 ' FROM VENDEDOR AS V INNER JOIN PESSOA AS P'+#13+
 ' ON V.ID_PESSOA = P.ID'+#13;
 
-const SQL_Fatura = 'SELECT p.nome_razao, p.cpf_cnpj, p.logradouro, p.numero, p.bairro, p.municipio,p.uf,'+#13+
+const SQL_Fatura = {'SELECT p.id, p.nome_razao, p.cpf_cnpj, p.logradouro, p.numero, p.bairro, p.municipio,p.uf,'+#13+
       ' f.data_vencimento, f.valor, f.id_venda, f.id,f.Qde_parcelas, f.parcela_Atual,f.status'+#13+
       ' from '+#13+
   ' pessoa AS p INNER JOIN fatura_cliente AS f '+#13+
-  ' ON f.ID_CLIENTE = p.ID      ' +#13;
+  ' ON f.ID_CLIENTE = p.ID      ' +#13; }
+  'SET @JurosAoDia = 0.0033;-- = 0,099  ou seja 9,9% ao mes'+#13+
+  'SELECT p.id as id_pessoa, p.nome_razao, p.cpf_cnpj, p.logradouro, p.numero, p.bairro, p.municipio,p.uf,'+#13+
+'  case when TIMESTAMPDIFF(DAY,data_vencimento, NOW())-1 <0 then 0 ELSE'+#13+
+' TIMESTAMPDIFF(DAY,data_vencimento, NOW())-1 end AS atraso,f.*,'+
+ ' case when valor * @JurosAoDia * TIMESTAMPDIFF(DAY,data_vencimento, NOW())<0 then 0 ELSE'+#13+
+ 'Format(valor * @JurosAoDia * TIMESTAMPDIFF(DAY,data_vencimento, NOW()),2)  end'+
+  ' AS Juros FROM '+#13+
+  'fatura_cliente AS f inner join pessoa as p ON f.ID_CLIENTE=P.ID'+#13;
+  //' WHERE fc.status=0 and fc.ID_CLIENTE=1';
 
 implementation
 
@@ -138,6 +154,23 @@ uses  LibConfigNFE, LibPluginRamo;
 
 {$R *.dfm}
 
+
+procedure TDM.CalcularFaturaTotaleJuros(out Total, TotalJuros: currency);
+var
+  I: Integer;
+begin
+Total := 0;
+TotalJuros := 0;
+QrFatura.Last;
+  for I := 1 to QrFatura.RecordCount do
+  begin
+  QrFatura.RecNo := i;
+       Total := Total      + strtocurr(QrFatura.FieldByName('valor').text);
+  TotalJuros := TotalJuros + strtocurr(stringreplace(QrFatura.FieldByName('juros').text,'.',',',[]));
+  application.ProcessMessages;
+  end;
+
+end;
 
 function TDM.ConcedePermissao(Acessar: TPermissao): Boolean;
 Var
@@ -223,7 +256,6 @@ procedure TDM.ExecutaQuery(sql: string);
 var
 Qr : TFDQuery;
 begin
-
 Qr := TFDQuery.Create(nil);
 Qr.Connection := FDCon;
 Qr.Transaction := FDTrans;
