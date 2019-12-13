@@ -28,17 +28,22 @@ Application.MainFormOnTaskBar := False;
          try
   if DM = nil then Application.CreateForm(TDM, DM);
   if FmRelatorio = nil then Application.CreateForm(TFmRelatorio, FmRelatorio);
-     FmRelatorio.pnpesquisa.visible := false;
+   try  FmRelatorio.pnpesquisa.visible := false;
+   except
+   //
+    end;
    FmRelatorio.PageControl1.TabIndex := 3;
-   dm.QrCliente.Open('select id, Nome_razaofrom pessoa where id='+id_cliente.ToString);
+   dm.QrCliente.Open('select id, Nome_razao from pessoa where id='+id_cliente.ToString);
    FmRelatorio.PnCliente.Caption := 'Cliente: '+dm.QrCliente.FieldByName('id').text+' - '+dm.QrCliente.FieldByName('nome_razao').Text;
    dm.QrCliente.Close;
-   dm.ProcuraFatura('where f.status=0 and f.id_cliente='+id_cliente.ToString);
+   FmRelatorio.StTop.Caption := 'Faturas do Cliente';
+   Fatura_id_cliente := id_cliente.ToString;
    FmRelatorio.DsFatura.DataSet := dm.QrFatura;
+   FmRelatorio.BtnAtualizarvaloresFaturaClick(FmRelatorio);
    FmRelatorio.ShowModal;
          finally
-          //FmRelatorio.close;
-
+          if dm<>nil then freeandnil(dm);
+        { FmRelatorio.Release; }
          end;
 end;
 exports
@@ -69,7 +74,6 @@ Application.MainFormOnTaskBar := False;
 finally
 if dm<>nil then freeandnil(dm);
 
-FmRelatorio.Release;
   //freeandnil(FmRelatorio);
 end;
 end;
@@ -77,6 +81,7 @@ exports
 ListarVendas;
 procedure GerarFatura(XHandle : THandle;Aid_Venda,Aid_cliente : integer; AValor : Currency;DataCompra : TDate;Quick : boolean=false);
 begin
+Application.Handle := XHandle;
 try
   if FmRelatorio = nil then application.CreateForm(TFmRelatorio, FmRelatorio);
   FmRelatorio.PageControl1.TabIndex := 1;

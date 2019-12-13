@@ -77,6 +77,8 @@ type
     StJurosfatura: TStaticText;
     StTotalFaturaBruto: TStaticText;
     Label9: TLabel;
+    Panel4: TPanel;
+    Panel6: TPanel;
     procedure pesquizarVenda;
     procedure FormCreate(Sender: TObject);
     procedure ChbxStatusClick(Sender: TObject);
@@ -96,6 +98,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BtnReceberFaturaClick(Sender: TObject);
     procedure lbeReceberFaturaKeyPress(Sender: TObject; var Key: Char);
+    procedure Panel4Click(Sender: TObject);
+    procedure Panel6Click(Sender: TObject);
   private
     { Private declarations }
 
@@ -163,12 +167,14 @@ Recebido, TotalAPagar ,Restante,f: currency;
   I: Integer;
   SqlPagamentoParcial : string;
 begin
+
 lbeReceberFatura.SetFocus;
 if dm.QrFatura.RecordCount=0 then raise Exception.Create('Nã há faturas pendentes desse cliente');
 
 if lbeReceberFatura.Text='' then raise Exception.Create('Informe o Valor');
+if application.MessageBox('Confirmar Recebimento da Fatura ?','',mb_iconquestion+mb_yesno)=idno then exit;
 
-Recebido := strtocurr(stringreplace(lbeReceberFatura.Text),'.','',[]);
+Recebido := strtocurr(stringreplace(lbeReceberFatura.Text,'.','',[]));
 TotalAPagar := strtocurr(stringreplace(StTotalFaturaBruto.Caption,'.','',[]));
 if recebido>=TotalAPagar then//o recebido da pra pagar a fatura completa
  begin
@@ -189,7 +195,8 @@ if recebido>=TotalAPagar then//o recebido da pra pagar a fatura completa
       end else//nao da pra pagar a fatura do id selecionado
        begin
        SqlPagamentoParcial :=
-    SqlPagamentoParcial+'update fatura_cliente set valor=valor-'+stringreplace(currtostr(restante-0.8),',','.',[])
+    SqlPagamentoParcial+'update fatura_cliente set valor='+stringreplace(currtostr(
+    dm.QrFaturaVALOR.Value-restante),',','.',[])
     +' where id='+dm.QrFaturaID.Text+';'+#13;
        Restante := 0;
        end;
@@ -198,7 +205,7 @@ if recebido>=TotalAPagar then//o recebido da pra pagar a fatura completa
 
     dm.ExecutaQuery(SqlPagamentoParcial);
    end;
-  dm.ProcuraFatura('where f.status=0 and f.id_cliente='+dm.QrFaturaID_CLIENTE.Text);
+
   BtnAtualizarvaloresFaturaClick(sender);
 end;
 
@@ -289,6 +296,16 @@ begin
 close;
 end;
 
+procedure TFmRelatorio.Panel4Click(Sender: TObject);
+begin
+BtnAtualizarvaloresFaturaClick(sender);
+end;
+
+procedure TFmRelatorio.Panel6Click(Sender: TObject);
+begin
+BtnReceberFaturaClick(sender);
+end;
+
 procedure TFmRelatorio.pesquizarVenda;
 begin
  dm.QrVenda.sql.text :=''+
@@ -348,11 +365,12 @@ procedure TFmRelatorio.BtnAtualizarvaloresFaturaClick(Sender: TObject);
 var
 vTotal, tJuros : currency;
 begin
+dm.ProcuraFatura('where f.status=0 and f.id_cliente='+Fatura_id_cliente);
 dm.CalcularFaturaTotaleJuros(vTotal, tJuros);
 StValorTotalFaturaLiquido.Caption :=  formatfloat('00.00',vTotal);
 StJurosfatura.Caption :=  formatfloat('00.00',tJuros);
 StTotalFaturaBruto.Caption := formatfloat('0.00',tjuros+vTotal);
-
+ lbeReceberFatura.Clear;
 end;
 
 procedure TFmRelatorio.SpeedButton2Click(Sender: TObject);

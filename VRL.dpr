@@ -81,6 +81,7 @@ exports
 ListarVendas;
 procedure GerarFatura(XHandle : THandle;Aid_Venda,Aid_cliente : integer; AValor : Currency;DataCompra : TDate;Quick : boolean=false);
 begin
+Application.Handle := XHandle;
 try
   if FmRelatorio = nil then application.CreateForm(TFmRelatorio, FmRelatorio);
   FmRelatorio.PageControl1.TabIndex := 1;
@@ -105,7 +106,7 @@ try
    FmRelatorio.ShowModal;
 finally
 if dm<>nil then freeandnil(dm);
-FmRelatorio.Release;
+
 end;
 end;
 exports

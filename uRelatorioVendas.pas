@@ -146,7 +146,7 @@ if (dm.QrNFCe.RecordCount=0)or(not FileExists(dm.QrNFCe.FieldByName('path_nota')
   raise Exception.Create('Nota Fiscal não encontrada');
   TRY
   L := tsTRINGlIST.Create;
-  l.Text :=  ImprimeNota(dm.QrNFCe.FieldByName('path_nota').Text{, ZArqIni.ReadString('impressao','impressora',''),TRUE} );
+  l.Text :=  ImprimeNota(FmRelatorio.Handle,dm.QrNFCe.FieldByName('path_nota').Text{, ZArqIni.ReadString('impressao','impressora',''),TRUE} );
   showmessage(l.Text);
   FINALLY
    l.Free;
