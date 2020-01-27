@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2019/11/10 19:43:16.000.556,D:\Note_Rosa\documents\dllVendasReport\VRL.dproj=C:\Users\Francisco informatic\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2019/11/10 19:43:16.000.556,C:\Users\Francisco informatic\Documents\Embarcadero\Studio\Projects\Project1.dproj=D:\Note_Rosa\documents\dllVendasReport\VRL.dproj</Transaction>
     <Transaction>2019/11/10 21:53:28.000.996,=D:\Note_Rosa\documents\dllVendasReport\Unit4.pas</Transaction>
-    <Transaction>2019/11/10 21:54:39.000.422,D:\Note_Rosa\documents\dllVendasReport\uRelatorioVendas.dfm=D:\Note_Rosa\documents\dllVendasReport\Unit4.dfm</Transaction>
-    <Transaction>2019/11/10 21:54:39.000.422,D:\Note_Rosa\documents\dllVendasReport\uRelatorioVendas.pas=D:\Note_Rosa\documents\dllVendasReport\Unit4.pas</Transaction>
+    <Transaction>2019/11/10 21:54:39.000.422,D:\Note_Rosa\documents\dllVendasReport\Unit4.dfm=D:\Note_Rosa\documents\dllVendasReport\uRelatorioVendas.dfm</Transaction>
+    <Transaction>2019/11/10 21:54:39.000.422,D:\Note_Rosa\documents\dllVendasReport\Unit4.pas=D:\Note_Rosa\documents\dllVendasReport\uRelatorioVendas.pas</Transaction>
     <Transaction>2019/11/10 22:01:58.000.469,=D:\Note_Rosa\documents\dllVendasReport\uDM.pas</Transaction>
     <Transaction>2019/11/11 09:10:53.000.792,=D:\Note_Rosa\documents\Vendas\units\LibConfigNFE.pas</Transaction>
     <Transaction>2019/11/11 09:10:53.000.809,=D:\Note_Rosa\documents\Vendas\units\LibPluginRamo.pas</Transaction>

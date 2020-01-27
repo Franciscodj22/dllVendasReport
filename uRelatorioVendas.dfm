@@ -66,7 +66,17 @@ object FmRelatorio: TFmRelatorio
             Width = 96
             Height = 35
             Caption = 'Imprimir'
+            Enabled = False
             OnClick = BtnImprimirVendaClick
+          end
+          object btnImprimirA4: TSpeedButton
+            Left = 272
+            Top = 6
+            Width = 137
+            Height = 32
+            Caption = 'Imprimir A4'
+            Enabled = False
+            OnClick = btnImprimirA4Click
           end
         end
         object DBGrid1: TDBGrid
@@ -588,13 +598,14 @@ object FmRelatorio: TFmRelatorio
         end
         object lbeReceberFatura: TLabeledEdit
           Left = 40
-          Top = 128
+          Top = 168
           Width = 121
           Height = 32
           EditLabel.Width = 142
           EditLabel.Height = 24
           EditLabel.Caption = 'Receber Fatura:'
           TabOrder = 0
+          OnChange = lbeReceberFaturaChange
           OnKeyPress = lbeReceberFaturaKeyPress
         end
         object DBGrid3: TDBGrid
@@ -634,13 +645,11 @@ object FmRelatorio: TFmRelatorio
             item
               Expanded = False
               FieldName = 'DATA_COMPRA'
-              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'Data_Vencimento'
-              Width = 64
               Visible = True
             end
             item
@@ -670,50 +679,46 @@ object FmRelatorio: TFmRelatorio
             item
               Expanded = False
               FieldName = 'PARCELA_ATUAL'
-              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'DIAS_PRAZO'
-              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'ID_VENDA'
-              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'STATUS'
-              Width = 64
               Visible = True
             end>
         end
         object StTroco: TStaticText
           Left = 222
-          Top = 128
+          Top = 168
           Width = 129
           Height = 28
           Caption = 'Troco: R$0,00'
           TabOrder = 2
         end
         object Panel3: TPanel
-          Left = 22
+          Left = 0
           Top = 16
-          Width = 338
-          Height = 55
+          Width = 410
+          Height = 59
           BevelOuter = bvNone
-          Color = clNavy
+          Color = clBackground
           ParentBackground = False
           TabOrder = 3
           object Label7: TLabel
-            Left = 1
-            Top = 1
-            Width = 119
-            Height = 24
+            Left = 2
+            Top = 2
+            Width = 135
+            Height = 25
             Alignment = taCenter
             AutoSize = False
             Caption = 'Liquido:'
@@ -722,10 +727,10 @@ object FmRelatorio: TFmRelatorio
             Transparent = False
           end
           object Label8: TLabel
-            Left = 121
-            Top = 1
-            Width = 87
-            Height = 24
+            Left = 140
+            Top = 2
+            Width = 120
+            Height = 25
             Alignment = taCenter
             AutoSize = False
             Caption = 'Juros:'
@@ -734,10 +739,10 @@ object FmRelatorio: TFmRelatorio
             Transparent = False
           end
           object Label9: TLabel
-            Left = 209
-            Top = 1
-            Width = 128
-            Height = 24
+            Left = 263
+            Top = 2
+            Width = 145
+            Height = 25
             Alignment = taCenter
             AutoSize = False
             Caption = 'Toltal:'
@@ -752,11 +757,11 @@ object FmRelatorio: TFmRelatorio
             Transparent = False
           end
           object StValorTotalFaturaLiquido: TStaticText
-            Left = 1
-            Top = 26
-            Width = 119
+            Left = 2
+            Top = 29
+            Width = 135
             Height = 28
-            Alignment = taRightJustify
+            Alignment = taCenter
             AutoSize = False
             Caption = 'R$: 0,00'
             Color = clCream
@@ -765,11 +770,11 @@ object FmRelatorio: TFmRelatorio
             Transparent = False
           end
           object StJurosfatura: TStaticText
-            Left = 121
-            Top = 26
-            Width = 87
+            Left = 140
+            Top = 29
+            Width = 120
             Height = 28
-            Alignment = taRightJustify
+            Alignment = taCenter
             AutoSize = False
             Caption = 'R$: 0,00'
             Color = clActiveBorder
@@ -778,11 +783,11 @@ object FmRelatorio: TFmRelatorio
             Transparent = False
           end
           object StTotalFaturaBruto: TStaticText
-            Left = 209
-            Top = 26
-            Width = 128
+            Left = 263
+            Top = 29
+            Width = 145
             Height = 28
-            Alignment = taRightJustify
+            Alignment = taCenter
             AutoSize = False
             Caption = 'R$: 0,00'
             Color = clMoneyGreen
@@ -798,7 +803,7 @@ object FmRelatorio: TFmRelatorio
           end
         end
         object Panel4: TPanel
-          Left = 24
+          Left = 39
           Top = 304
           Width = 129
           Height = 41
@@ -832,6 +837,657 @@ object FmRelatorio: TFmRelatorio
           ParentFont = False
           TabOrder = 5
           OnClick = Panel6Click
+        end
+        object Panel13: TPanel
+          Left = 39
+          Top = 81
+          Width = 320
+          Height = 41
+          Cursor = crHandPoint
+          Caption = 'Imprime Carn'#234
+          Color = clTeal
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -20
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentBackground = False
+          ParentFont = False
+          TabOrder = 6
+          OnClick = Panel13Click
+        end
+      end
+      object TabSheet5: TTabSheet
+        Caption = 'Venda Terminal'
+        ImageIndex = 4
+        object TPanel
+          Left = 0
+          Top = 0
+          Width = 1223
+          Height = 361
+          Align = alClient
+          BevelOuter = bvNone
+          Color = clInactiveCaption
+          ParentBackground = False
+          TabOrder = 0
+          object Panel7: TPanel
+            Left = 0
+            Top = 0
+            Width = 457
+            Height = 361
+            Align = alLeft
+            Caption = 'Panel7'
+            Padding.Left = 10
+            Padding.Top = 5
+            Padding.Right = 10
+            Padding.Bottom = 10
+            TabOrder = 0
+            object DBGProcuraProdutos: TDBGrid
+              Left = 11
+              Top = 57
+              Width = 435
+              Height = 293
+              Margins.Top = 0
+              Align = alClient
+              DataSource = DsprocuraProduto
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -12
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 0
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -12
+              TitleFont.Name = 'Tahoma'
+              TitleFont.Style = []
+              OnDblClick = DBGProcuraProdutosDblClick
+              Columns = <
+                item
+                  Expanded = False
+                  FieldName = 'ID'
+                  Width = 60
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'DESCRICAO'
+                  Width = 201
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PRECO_VENDA'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'MARCA'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'UN'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'ICMS'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'ID_FABRICANTE'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'ID_GRUPO'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PRECO_COMPRA'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'LUCRO_AV'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'ESTOQUE_MIN'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'ESTOQUE'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'CD_BARR'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'NCM_'
+                  Visible = True
+                end>
+            end
+            object Panel10: TPanel
+              Left = 11
+              Top = 6
+              Width = 435
+              Height = 51
+              Margins.Bottom = 5
+              Align = alTop
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -16
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Padding.Left = 1
+              Padding.Top = 20
+              Padding.Bottom = 2
+              ParentFont = False
+              TabOrder = 1
+              object sbxProcuraProduto: TSearchBox
+                Left = 2
+                Top = 21
+                Width = 255
+                Height = 27
+                Margins.Left = 50
+                Margins.Top = 10
+                Margins.Bottom = 60
+                Align = alLeft
+                TabOrder = 0
+                OnInvokeSearch = sbxProcuraProdutoInvokeSearch
+              end
+              object LbeQde: TLabeledEdit
+                Left = 263
+                Top = 21
+                Width = 82
+                Height = 27
+                EditLabel.Width = 81
+                EditLabel.Height = 19
+                EditLabel.Caption = 'Quantidade'
+                TabOrder = 1
+                OnKeyPress = LbeQdeKeyPress
+              end
+            end
+          end
+          object Panel8: TPanel
+            Left = 457
+            Top = 0
+            Width = 761
+            Height = 361
+            Align = alLeft
+            TabOrder = 1
+            object Label10: TLabel
+              Left = 58
+              Top = 1
+              Width = 128
+              Height = 45
+              Align = alLeft
+              AutoSize = False
+            end
+            object DBGrid4: TDBGrid
+              Left = 1
+              Top = 95
+              Width = 759
+              Height = 217
+              Margins.Top = 0
+              Align = alBottom
+              DataSource = dsItens
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -12
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 0
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -12
+              TitleFont.Name = 'Tahoma'
+              TitleFont.Style = []
+              OnCellClick = DBGrid4CellClick
+              OnDrawColumnCell = DBGrid4DrawColumnCell
+              Columns = <
+                item
+                  Expanded = False
+                  FieldName = 'COD_IT'
+                  Width = 35
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'CD_BARR'
+                  Width = 95
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'DESCRICAO'
+                  Width = 200
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'UN'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'VL_UN'
+                  Width = 49
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'QDE'
+                  Width = 47
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'VL_TOTAL'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'VL_DESCONTO'
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  Title.Caption = 'Remover'
+                  Visible = True
+                end>
+            end
+            object Panel9: TPanel
+              Left = 1
+              Top = 46
+              Width = 759
+              Height = 49
+              Align = alBottom
+              TabOrder = 1
+              object BtnImprimeOrcamento: TSpeedButton
+                Left = 345
+                Top = 1
+                Width = 136
+                Height = 47
+                Align = alLeft
+                Caption = 'Imprimir'
+                Glyph.Data = {
+                  B60D0000424DB60D000000000000360000002800000030000000180000000100
+                  180000000000800D000000000000000000000000000000000000FFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFDFDFAFAFAF8F8F8F8
+                  F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8
+                  FAFAFAFDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFDFDFDFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
+                  FCFCFCFCFCFCFCFCFDFDFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFDFDFDEDEDEDCECECEB58158B48056B48055B47F55B47F55B48055B480
+                  55B47F55B38056B48056B48056B58158CECECEEDEDEDFDFDFDFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F7F7E7E7E7A2A2A2A0A0A0A0A0A0A0A0A0
+                  A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A2A2A2E7E7E7F7F7F7FFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFAAABAB7171716E6F6F5B5B5B333333B18057F3
+                  DEC5F4DEC5F3DDC5F3DEC5F4DDC5F4DEC5F3DEC5F4DEC5F3DDC5F3DEC7B27F57
+                  3333335A5B5B6E6F6F7171719E9F9FFFFFFFFFFFFFC6C6C6A1A1A1A0A0A09B9B
+                  9B8F8F8FA0A0A0B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7
+                  B7B7B7B7B7A0A0A08F8F8F9A9A9AA0A0A0A1A1A1BEBEBEFFFFFFFFFFFF686868
+                  6162625E5F5F4849491B1B1BB38158F9EADAF8EADAF8EADAF8E9DAF8EADAF8EA
+                  DAF9EADAF9E9D9F8EADAF8E9DAB381581B1B1B4849495E5F5F616262646565FF
+                  FFFFFFFFFF9B9B9B989898979797929292868686A1A1A1BABABABABABABABABA
+                  BABABABABABABABABABABABABABABABABABABABABAA1A1A18686869292929797
+                  979898989A9A9AFFFFFFFFFFFF8E8F8F878888838484636464232323B4845BFB
+                  F1E7FBF2E7FBF1E7FBF1E7FBF1E8FBF1E8FBF1E7FBF1E7FBF1E7FBF1E7B4835B
+                  2323236364648384848788888B8C8CFFFFFFFFFFFFA7A7A7A1A1A1A0A0A09898
+                  98888888A1A1A1BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
+                  BCBCBCBCBCA1A1A1888888989898A0A0A0A1A1A1A4A4A4FFFFFFFFFFFF949495
+                  8D8D8E89898A69696A272727B6875FFBF2E7FBF1E7FBF1E7FBF2E7FBF1E8FBF1
+                  E8FBF2E7FBF1E8FBF1E7FBF1E8B6865E27272769696A89898A8D8D8E919192FF
+                  FFFFFFFFFFA9A9A9A3A3A3A2A2A29A9A9A898989A2A2A2BCBCBCBCBCBCBCBCBC
+                  BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCA2A2A28989899A9A9AA2A2
+                  A2A3A3A3A6A6A6FFFFFFFFFFFF9B9B9C95959692929378787943434429292A26
+                  262726262726262726262726262726262726262726262726262726262729292A
+                  43434478787992929395959699999AFFFFFFFFFFFFAAAAAAA5A5A5A4A4A49E9E
+                  9E9090908A8A8A89898989898989898989898989898989898989898989898989
+                  89898989898A8A8A9090909E9E9EA4A4A4A5A5A5A8A8A8FFFFFFFFFFFFA9A9AA
+                  A4A4A5A3A3A49898998484857A7A7B7979797979797979797979797979797979
+                  797979797979797979797979797A7A7B848485989899A3A3A4A4A4A5A7A7A8FF
+                  FFFFFFFFFFAEAEAEA9A9A9A8A8A8A6A6A6A1A1A19E9E9E9E9E9E9E9E9E9E9E9E
+                  9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9EA1A1A1A6A6A6A8A8
+                  A8A9A9A9ACACACFFFFFFFFFFFFBCBCBCB8B8B8B8B8B8B7B7B7B4B4B4B3B3B3B3
+                  B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B30ACE220F8F1EB3B3B30ACE220F8F1E
+                  B4B4B4B7B7B7B8B8B8B8B8B8BBBBBBFFFFFFFFFFFFB3B3B3AEAEAEAEAEAEADAD
+                  ADADADADACACACACACACACACACACACACACACACACACACACACAC9494948F8F8FAC
+                  ACAC9494948F8F8FADADADADADADAEAEAEAEAEAEB1B1B1FFFFFFFFFFFFCFCFCF
+                  CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+                  CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCEAEAEAEAEAEACECECEFF
+                  FFFFFFFFFFB8B8B8B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3
+                  B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3B3BABA
+                  BABABABAB6B6B6FFFFFFFFFFFFDDDDDDDADADADADADADADADA3F3F3F3F3F3F3F
+                  3F3F3F3F3F3E3F3F3E3F3F3F3F3E3F3F3F3F3F3E3F3F3F3F3F3F3E3F3F3F3F3F
+                  3E3F3FDADADAC4C4C4C4C4C5DCDCDCFFFFFFFFFFFFBBBBBBB6B6B6B6B6B6B6B6
+                  B68F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F
+                  8F8F8F8F8F8F8F8F8F8F8FB6B6B6B1B1B1B1B1B1B9B9B9FFFFFFFFFFFFE0E0E0
+                  DEDEDEDEDEDEDEDEDE494949626262747474909090B0B0B0CECECFE3E4E3EBEB
+                  EBE0E0E0C7C8C7A8A8A88D8D8C7C7C7C494949DEDEDE8B8C8B8B8B8BE0E0E0FF
+                  FFFFFFFFFFBBBBBBB7B7B7B7B7B7B7B7B79292929898989D9D9DA4A4A4ACACAC
+                  B3B3B3B8B8B8BABABAB8B8B8B1B1B1AAAAAAA3A3A39F9F9F929292B7B7B7A2A2
+                  A2A2A2A2BABABAFFFFFFFFFFFFD0D0D0CDCDCDCDCDCDCDCDCD53545462626275
+                  7574909090B0B0B0CECECFE4E4E4EBEBEBE0E0E0C8C7C8A8A8A98C8D8D7C7C7C
+                  535354CDCDCDCDCDCDCDCDCDCFCFCFFFFFFFFFFFFFB8B8B8B3B3B3B3B3B3B3B3
+                  B39494949898989D9D9DA4A4A4ACACACB3B3B3B9B9B9BABABAB8B8B8B1B1B1AA
+                  AAAAA3A3A39F9F9F949494B3B3B3B3B3B3B3B3B3B6B6B6FFFFFFFFFFFF979797
+                  7070707070706F6F6F5E5E5E5E5D5E5D5D5D5E5E5E5E5E5E5E5E5E5E5E5E5E5D
+                  5D5E5E5E5E5E5D5E5D5E5E5E5E5E5E5E5E5E5E6F6F6F7070707070708E8E8EFF
+                  FFFFFFFFFFB3B3B39D9D9D9D9D9D9C9C9C979797979797979797979797979797
+                  9797979797979797979797979797979797979797979797979797979C9C9C9D9D
+                  9D9D9D9DAEAEAEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF909090777777CDA882F6
+                  EDE6F5EEE6F6EDE7F5EEE7F6EEE7F6EDE7F6EEE7F5EEE6F6EDE7F5EEE6CDA782
+                  777777909090FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAFAF
+                  AF9D9D9DA9A9A9BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+                  BBBBBBBBBBA9A9A99D9D9DAFAFAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFF8C8C8C7A7A7ACFAB86F4EDE5F4EDE6F4EDE5F4EDE5F5EDE5F4ED
+                  E6F4EDE6F5EDE5F4EDE6F5EDE6CFAA867A7A7A8C8C8CFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFABABAB9E9E9EAAAAAABBBBBBBBBBBBBBBBBB
+                  BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBAAAAAA9E9E9EABABABFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8A8A8A7C7B7CD1AD89F4
+                  ECE5F4ECE4F4ECE5F4ECE5F4ECE5F4ECE4F4ECE5F4ECE4F4ECE4F4ECE4D1AD89
+                  7C7B7C8A8A8AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA9A9
+                  A99E9E9EABABABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+                  BBBBBBBBBBABABAB9E9E9EA9A9A9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFF8888887C7C7CD3B08CF3EBE3F3EBE3F3EBE3F3EBE4F4EBE4F3EC
+                  E4F4ECE3F3EBE4F3EBE3F4EBE3D3B18C7C7C7C888888FFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFA8A8A89F9F9FABABABBABABABABABABABABA
+                  BABABABABABABABABABABABABABABABABABABABABAACACAC9F9F9FA8A8A8FFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9393937C7C7CD4B38FF1
+                  E9E0F2E9DFF2E9E0F2E9DFF2E8DFF2E9DFF2E9DFF1E9E0F2E9E0F2E9DFD5B38F
+                  7C7C7C939393FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB0B0
+                  B09F9F9FACACACBABABABABABABABABABABABABABABABABABABABABABABABABA
+                  BABABABABAACACAC9F9F9FB0B0B0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFF9F9F9868686D5B591EFE3D5F0E3D5F0E3D5EFE3D5EFE3D5EFE3
+                  D5F0E3D6EFE3D5F0E3D6F0E3D5D6B691868686F9F9F9FFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFBFBFBA7A7A7ACACACB8B8B8B8B8B8B8B8B8
+                  B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8B8ADADADA7A7A7FBFBFBFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF6F6F6D9BA96EE
+                  DFCDEEDFCDEEDFCDEEDFCDEEDFCDEEDECEEEDFCDEEDFCDEEDFCEEEDFCED9BB96
+                  F6F6F6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFF9F9F9AFAFAFB7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7B7
+                  B7B7B7B7B7AFAFAFF9F9F9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFDBBC99DABA96DABA96DABA96DABA96DABA96DABA
+                  96DABA96DABA96DABA96DABA96DBBC99FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB0B0B0AEAEAEAEAEAEAEAEAE
+                  AEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEB0B0B0FFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+                NumGlyphs = 2
+                OnClick = BtnImprimeOrcamentoClick
+                ExplicitLeft = 393
+                ExplicitTop = 9
+              end
+              object stTotalCompra: TStaticText
+                Left = 1
+                Top = 1
+                Width = 184
+                Height = 47
+                Align = alLeft
+                Alignment = taCenter
+                AutoSize = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                Caption = '0,00'
+                Color = clActiveCaption
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -20
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentColor = False
+                ParentFont = False
+                TabOrder = 0
+                Transparent = False
+              end
+              object stQdeVolumes: TStaticText
+                Left = 185
+                Top = 1
+                Width = 160
+                Height = 47
+                Align = alLeft
+                Alignment = taCenter
+                AutoSize = False
+                BevelInner = bvNone
+                Caption = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -20
+                Font.Name = 'Tahoma'
+                Font.Style = [fsBold]
+                ParentFont = False
+                TabOrder = 1
+                Transparent = False
+              end
+              object stVenda: TStaticText
+                Left = 569
+                Top = 1
+                Width = 189
+                Height = 47
+                Align = alRight
+                AutoSize = False
+                Caption = 'Venda: Nenhuma'
+                TabOrder = 2
+                Transparent = False
+              end
+            end
+            object StVendedor: TStaticText
+              Left = 658
+              Top = 1
+              Width = 102
+              Height = 45
+              Align = alRight
+              Caption = 'Vendedor: '
+              TabOrder = 2
+            end
+            object BitBtn1: TBitBtn
+              Left = 570
+              Top = 23
+              Width = 107
+              Height = 33
+              Caption = 'BitBtn1'
+              TabOrder = 3
+              Visible = False
+              OnClick = BitBtn1Click
+            end
+            object StaticText2: TStaticText
+              Left = 1
+              Top = 1
+              Width = 57
+              Height = 45
+              Align = alLeft
+              Caption = 'Total:'
+              Color = clActiveCaption
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWhite
+              Font.Height = -20
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              ParentColor = False
+              ParentFont = False
+              TabOrder = 4
+              Transparent = False
+            end
+            object StaticText3: TStaticText
+              Left = 186
+              Top = 1
+              Width = 87
+              Height = 45
+              Align = alLeft
+              Caption = 'Volumes:'
+              TabOrder = 5
+              Transparent = False
+            end
+            object Panel12: TPanel
+              Left = 1
+              Top = 312
+              Width = 759
+              Height = 48
+              Align = alBottom
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -16
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Padding.Left = 2
+              Padding.Top = 5
+              Padding.Right = 5
+              Padding.Bottom = 5
+              ParentFont = False
+              TabOrder = 6
+              object BtnAplicarDescotoQdeItens: TSpeedButton
+                Left = 660
+                Top = 6
+                Width = 93
+                Height = 36
+                Align = alRight
+                Caption = 'Aplicar'
+                OnClick = BtnAplicarDescotoQdeItensClick
+                ExplicitLeft = 299
+                ExplicitTop = 38
+              end
+              object LbDescricaoItem: TLabel
+                Left = 229
+                Top = 23
+                Width = 376
+                Height = 19
+                AutoSize = False
+                Caption = 'Nenhum Produto'
+                Color = clInactiveCaption
+                ParentColor = False
+                Transparent = False
+              end
+              object LbeDesconto_p: TLabeledEdit
+                Left = 124
+                Top = 19
+                Width = 100
+                Height = 27
+                EditLabel.Width = 98
+                EditLabel.Height = 19
+                EditLabel.Caption = 'Desconto (%)'
+                TabOrder = 0
+                OnKeyPress = LbeQdeKeyPress
+              end
+              object LbeQdeItens: TLabeledEdit
+                Left = 5
+                Top = 19
+                Width = 84
+                Height = 27
+                EditLabel.Width = 81
+                EditLabel.Height = 19
+                EditLabel.Caption = 'Quantidade'
+                TabOrder = 1
+                OnKeyPress = LbeQdeKeyPress
+              end
+            end
+          end
+        end
+      end
+      object TabSheet6: TTabSheet
+        Caption = 'Cliente_Terminal'
+        ImageIndex = 5
+        object Panel11: TPanel
+          Left = 0
+          Top = 0
+          Width = 1223
+          Height = 41
+          Align = alTop
+          Padding.Left = 5
+          Padding.Top = 5
+          Padding.Bottom = 5
+          TabOrder = 0
+          object SearchBox1: TSearchBox
+            Left = 6
+            Top = 6
+            Width = 312
+            Height = 29
+            Align = alLeft
+            TabOrder = 0
+            OnInvokeSearch = SearchBox1InvokeSearch
+            ExplicitHeight = 32
+          end
+        end
+        object DbgCliente: TDBGrid
+          Left = 0
+          Top = 41
+          Width = 1223
+          Height = 320
+          Align = alClient
+          ReadOnly = True
+          TabOrder = 1
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -20
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = []
+          OnCellClick = DbgClienteCellClick
+          OnDrawColumnCell = DbgClienteDrawColumnCell
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'ID'
+              Width = 57
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'TP_PESSOA'
+              Width = 29
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'NOME_RAZAO'
+              Width = 296
+              Visible = True
+            end
+            item
+              Expanded = False
+              Title.Caption = 'Nova Venda'
+              Width = 112
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'MUNICIPIO'
+              Width = 233
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'CPF_CNPJ'
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'APELIDO_FANTASIA'
+              Width = 192
+              Visible = True
+            end>
         end
       end
     end
@@ -1093,9 +1749,9 @@ object FmRelatorio: TFmRelatorio
       end
     end
     object PnCliente: TPanel
-      Left = 574
+      Left = 856
       Top = 86
-      Width = 417
+      Width = 287
       Height = 33
       BevelOuter = bvNone
       Caption = 'Cliente : 1 - Nome do Cliente'
@@ -1113,23 +1769,21 @@ object FmRelatorio: TFmRelatorio
   end
   object DsVenda: TDataSource
     DataSet = DM.QrVenda
-    Left = 940
-    Top = 156
+    Left = 900
+    Top = 148
   end
   object DsEmpresa: TDataSource
-    DataSet = DM.QrEmpresa
     Left = 734
     Top = 144
   end
   object DsVendedor: TDataSource
-    DataSet = DM.QrVendedor
     Left = 814
-    Top = 136
+    Top = 144
   end
   object DsFatura: TDataSource
     DataSet = DM.QrFatura
-    Left = 772
-    Top = 308
+    Left = 556
+    Top = 148
   end
   object frxReport1: TfrxReport
     Version = '5.6.1'
@@ -1139,36 +1793,46 @@ object FmRelatorio: TFmRelatorio
     PreviewOptions.Zoom = 1.000000000000000000
     PrintOptions.Printer = 'Padr'#227'o'
     PrintOptions.PrintOnSheet = 0
-    ReportOptions.CreateDate = 43783.366313460600000000
-    ReportOptions.LastChange = 43784.816844513900000000
+    ReportOptions.CreateDate = 43841.004137349500000000
+    ReportOptions.LastChange = 43852.613602754630000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
-      'procedure BarCode1OnBeforePrint(Sender: TfrxComponent);'
+      ''
+      'procedure MasterData1OnAfterPrint(Sender: TfrxComponent);'
       'begin'
-      
-        '  barcode1.text := formatfloat('#39'00000'#39', strtofloat(barcode1.text' +
-        '));'
-      
-        '   barcode2.text := barcode1.text;// formatfloat('#39'00000'#39', strtof' +
-        'loat(barcode2.text));      '
+      '                                        '
       'end;'
       ''
-      
-        'procedure Shape1OnPreviewClick(Sender: TfrxView; Button: TMouseB' +
-        'utton; Shift: Integer; var Modified: Boolean);'
+      'procedure MasterData1OnBeforePrint(Sender: TfrxComponent);'
       'begin'
-      ' // showmessage('#39'vc clicou'#39');                            '
+      '                               '
+      
+        '//  memo1.text := strtofloat(memo1.text)+<dbItens."vl_TOTAL">-<d' +
+        'bItens."vl_desconto">;  '
       'end;'
       ''
       'begin'
+      '     '
       ''
       'end.')
-    Left = 704
-    Top = 227
+    Left = 936
+    Top = 195
     Datasets = <
       item
-        DataSet = frxFatura
-        DataSetName = 'dbFatura'
+        DataSet = frxCliente
+        DataSetName = 'dbCliente'
+      end
+      item
+        DataSet = frxEmpresa
+        DataSetName = 'dbEmpresa'
+      end
+      item
+        DataSet = frxItens
+        DataSetName = 'dbItens'
+      end
+      item
+        DataSet = frxVendaTerminal
+        DataSetName = 'dbVendaTerminal'
       end>
     Variables = <>
     Style = <>
@@ -1177,233 +1841,509 @@ object FmRelatorio: TFmRelatorio
       Width = 1000.000000000000000000
     end
     object Page1: TfrxReportPage
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -16
+      Font.Name = 'Arial'
+      Font.Style = []
       PaperWidth = 210.000000000000000000
       PaperHeight = 297.000000000000000000
-      PaperSize = 256
+      PaperSize = 9
       LeftMargin = 10.000000000000000000
       RightMargin = 10.000000000000000000
       TopMargin = 10.000000000000000000
       BottomMargin = 10.000000000000000000
-      HGuides.Strings = (
-        '294,80334'
-        '706,77211'
-        '253,22851'
-        '695,43352'
-        '120,94496')
-      VGuides.Strings = (
-        '646,29963'
-        '230,55133')
-      object MasterData1: TfrxMasterData
+      MirrorMargins = True
+      object ReportTitle1: TfrxReportTitle
         FillType = ftBrush
-        Height = 325.039580000000000000
+        Height = 200.315090000000000000
         Top = 18.897650000000000000
         Width = 718.110700000000000000
-        DataSet = frxFatura
-        DataSetName = 'dbFatura'
-        RowCount = 0
-        object Shape1: TfrxShapeView
-          Left = 222.992270000000000000
-          Width = 483.779840000000000000
-          Height = 275.905690000000000000
-          OnPreviewClick = 'Shape1OnPreviewClick'
-        end
-        object dbFaturadata_vencimento: TfrxMemoView
-          Left = 83.149660000000000000
-          Top = 28.236240000000000000
-          Width = 49.133890000000000000
-          Height = 177.637910000000000000
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
-          Memo.UTF8W = (
-            'Vencimento: [dbFatura."data_vencimento"]')
-          Rotation = 90
-        end
-        object BarCode1: TfrxBarCodeView
-          Left = 132.653680000000000000
-          Top = 102.047310000000000000
-          Width = 79.000000000000000000
-          Height = 79.000000000000000000
-          OnBeforePrint = 'BarCode1OnBeforePrint'
-          BarType = bcCode128
-          DataField = 'id'
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
-          Expression = #39'0000'#39
-          Rotation = 90
-          TestLine = False
-          Text = '12345678'
-          WideBarRatio = 2.000000000000000000
-          Zoom = 1.000000000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = 'Arial'
-          Font.Style = []
-        end
-        object Memo1: TfrxMemoView
-          Left = 241.110390000000000000
-          Top = 10.897650000000000000
-          Width = 415.748300000000000000
+        object dbVendaTerminalEmitente: TfrxMemoView
+          Align = baWidth
+          Top = 68.913420000000000000
+          Width = 718.110700000000000000
           Height = 26.456710000000000000
-          DataField = 'nome_razao'
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
+          DataSet = frxVendaA4
+          DataSetName = 'dbVendaA4'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
-          Font.Height = -19
+          Font.Height = -24
           Font.Name = 'Arial'
-          Font.Style = []
+          Font.Style = [fsBold]
+          HAlign = haCenter
           Memo.UTF8W = (
-            '[dbFatura."nome_razao"]')
+            '[dbEmpresa."razao_social"]')
           ParentFont = False
         end
-        object dbFaturacpf_cnpj: TfrxMemoView
-          Left = 242.228510000000000000
-          Top = 44.354360000000000000
-          Width = 170.078850000000000000
-          Height = 18.897650000000000000
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
+        object dbVendaTerminalLogradouro: TfrxMemoView
+          Align = baWidth
+          Top = 98.149660000000000000
+          Width = 718.110700000000000000
+          Height = 45.354360000000000000
+          DataSet = frxVendaA4
+          DataSetName = 'dbVendaA4'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          HAlign = haCenter
           Memo.UTF8W = (
-            'CPF: [dbFatura."cpf_cnpj"]')
-        end
-        object dbFaturalogradouro: TfrxMemoView
-          Left = 243.669450000000000000
-          Top = 109.606370000000000000
-          Width = 207.874150000000000000
-          Height = 75.590600000000000000
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
-          Memo.UTF8W = (
-            '[dbFatura."logradouro"],[dbFatura."numero"], [dbFatura."bairro"]'
-            '[dbFatura."municipio"] - [dbFatura."uf"]')
+            '[dbEmpresa."Logradouro"], [dbEmpresa."numero"]'
+            
+              '[dbEmpresa."bairro"] - [dbEmpresa."nome_cidade"] - [dbEmpresa."U' +
+              'F"]')
+          ParentFont = False
           Formats = <
-            item
-            end
-            item
-            end
-            item
-            end
             item
             end
             item
             end>
         end
-        object dbFaturaparcela_Atual: TfrxMemoView
-          Left = 510.016080000000000000
-          Top = 249.228510000000000000
-          Width = 117.165430000000000000
+        object dbVendaTerminalcidade: TfrxMemoView
+          Align = baWidth
+          Top = 20.897650000000000000
+          Width = 718.110700000000000000
           Height = 18.897650000000000000
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
-          Memo.UTF8W = (
-            '[dbFatura."parcela_Atual"] de [dbFatura."Qde_parcelas"]')
-        end
-        object dbFaturavalor: TfrxMemoView
-          Left = 291.921460000000000000
-          Top = 199.976500000000000000
-          Width = 79.370130000000000000
-          Height = 30.236240000000000000
-          DataField = 'valor'
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
+          DataSet = frxVendaA4
+          DataSetName = 'dbVendaA4'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
-          Font.Height = -21
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftBottom]
+          ParentFont = False
+        end
+        object dbVendaTerminaldata_venda: TfrxMemoView
+          Left = 3.779530000000000000
+          Top = 152.063080000000000000
+          Width = 249.448980000000000000
+          Height = 18.897650000000000000
+          DataSet = frxVendaA4
+          DataSetName = 'dbVendaA4'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
           Font.Name = 'Arial'
           Font.Style = [fsBold]
           Memo.UTF8W = (
-            '[dbFatura."valor"]')
+            'Data: [dbVendaTerminal."data_venda"]')
           ParentFont = False
         end
-        object Memo2: TfrxMemoView
-          Left = 245.669450000000000000
-          Top = 200.315090000000000000
-          Width = 26.456710000000000000
-          Height = 34.015770000000000000
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -16
-          Font.Name = 'Arial'
-          Font.Style = []
-          Memo.UTF8W = (
-            'R$')
-          ParentFont = False
-        end
-        object Memo3: TfrxMemoView
-          Left = 510.236550000000000000
-          Top = 209.433210000000000000
-          Width = 181.417440000000000000
+        object dbVendaTerminalnome_razao: TfrxMemoView
+          Align = baWidth
+          Width = 718.110700000000000000
           Height = 18.897650000000000000
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
-          Memo.UTF8W = (
-            'Vencimento: [dbFatura."data_vencimento"]')
-        end
-        object BarCode2: TfrxBarCodeView
-          Left = 616.433520000000000000
-          Top = 102.047310000000000000
-          Width = 79.000000000000000000
-          Height = 79.000000000000000000
-          OnBeforePrint = 'BarCode1OnBeforePrint'
-          BarType = bcCode128
-          DataField = 'id'
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
-          Expression = #39'0000'#39
-          Rotation = 90
-          TestLine = False
-          Text = '12345678'
-          WideBarRatio = 2.000000000000000000
-          Zoom = 1.000000000000000000
+          DataSet = frxVendaA4
+          DataSetName = 'dbVendaA4'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
-          Font.Height = -12
+          Font.Height = -13
           Font.Name = 'Arial'
-          Font.Style = []
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop]
+          Memo.UTF8W = (
+            
+              'Or'#231'amento/Venda: [dbItens."id_venda"] | Cliente: [dbcliente."nom' +
+              'e_razao"]')
+          ParentFont = False
+          Formats = <
+            item
+            end
+            item
+            end>
         end
-        object dbFaturaid_venda: TfrxMemoView
-          Left = 245.669450000000000000
-          Top = 74.590600000000000000
-          Width = 166.299320000000000000
-          Height = 26.456710000000000000
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
+        object dbItensA4id_venda: TfrxMemoView
+          Left = 3.779530000000000000
+          Top = 178.519790000000000000
+          Width = 196.535560000000000000
+          Height = 18.897650000000000000
+          DataSet = frxItens
+          DataSetName = 'dbItens'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
-          Font.Height = -19
+          Font.Height = -13
           Font.Name = 'Arial'
-          Font.Style = []
+          Font.Style = [fsBold]
           Memo.UTF8W = (
-            'Venda: [dbFatura."id_venda"]')
+            'Or'#231'amento/Venda: [dbItens."id_venda"]')
           ParentFont = False
         end
-        object dbFaturanome_razao: TfrxMemoView
-          Left = 11.338590000000000000
-          Top = 11.338590000000000000
-          Width = 52.913420000000000000
-          Height = 196.535560000000000000
-          DataField = 'nome_razao'
-          DataSet = frxFatura
-          DataSetName = 'dbFatura'
+        object Line2: TfrxLineView
+          Left = -64.252010000000000000
+          Top = 49.133890000000000000
+          Width = 876.850960000000000000
+          Color = clBlack
+          Frame.Style = fsDash
+          Diagonal = True
+        end
+        object Memo13: TfrxMemoView
+          Left = 219.212740000000000000
+          Top = 178.637910000000000000
+          Width = 154.960730000000000000
+          Height = 18.897650000000000000
+          DataSet = frxItens
+          DataSetName = 'dbItens'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Memo.UTF8W = (
+            'Vendedor: [dbVendaTerminal."id_vendedor"]')
+          ParentFont = False
+        end
+      end
+      object MasterData1: TfrxMasterData
+        FillType = ftBrush
+        Height = 18.897650000000000000
+        Top = 328.819110000000000000
+        Width = 718.110700000000000000
+        OnAfterPrint = 'MasterData1OnAfterPrint'
+        OnBeforePrint = 'MasterData1OnBeforePrint'
+        DataSet = frxItens
+        DataSetName = 'dbItens'
+        RowCount = 0
+        object dbItensA4ITEM: TfrxMemoView
+          Align = baLeft
+          Width = 49.133890000000000000
+          Height = 18.897650000000000000
+          DataSet = frxItens
+          DataSetName = 'dbItens'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
           Font.Height = -13
           Font.Name = 'Arial'
           Font.Style = []
-          HAlign = haBlock
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haRight
           Memo.UTF8W = (
-            '[dbFatura."nome_razao"]')
+            '[dbItens."COD_IT"] ')
           ParentFont = False
-          Rotation = 90
+        end
+        object dbItensA4DESCRICAO: TfrxMemoView
+          Align = baLeft
+          Left = 49.133890000000000000
+          Width = 309.921460000000000000
+          Height = 18.897650000000000000
+          DataSet = frxItens
+          DataSetName = 'dbItens'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          Memo.UTF8W = (
+            ' [dbItens."DESCRICAO"]')
+          ParentFont = False
+        end
+        object dbItensA4un: TfrxMemoView
+          Align = baLeft
+          Left = 359.055350000000000000
+          Width = 37.795300000000000000
+          Height = 18.897650000000000000
+          DataField = 'un'
+          DataSet = frxItens
+          DataSetName = 'dbItens'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            '[dbItens."un"]')
+          ParentFont = False
+        end
+        object dbItensA4VL_UN: TfrxMemoView
+          Align = baLeft
+          Left = 396.850650000000000000
+          Width = 90.708720000000000000
+          Height = 18.897650000000000000
+          DataField = 'VL_UN'
+          DataSet = frxItens
+          DataSetName = 'dbItens'
+          DisplayFormat.FormatStr = '%2.2f'
+          DisplayFormat.Kind = fkNumeric
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            '[dbItens."VL_UN"]')
+          ParentFont = False
+        end
+        object dbItensA4qde: TfrxMemoView
+          Align = baLeft
+          Left = 487.559370000000000000
+          Width = 64.252010000000000000
+          Height = 18.897650000000000000
+          DataField = 'qde'
+          DataSet = frxItens
+          DataSetName = 'dbItens'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            '[dbItens."qde"]')
+          ParentFont = False
+        end
+        object dbItensA4TOTAL: TfrxMemoView
+          Align = baLeft
+          Left = 551.811380000000000000
+          Width = 79.370130000000000000
+          Height = 18.897650000000000000
+          DataField = 'VL_TOTAL'
+          DataSet = frxItens
+          DataSetName = 'dbItens'
+          DisplayFormat.FormatStr = '%2.2f'
+          DisplayFormat.Kind = fkNumeric
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            '[dbItens."VL_TOTAL"]')
+          ParentFont = False
+        end
+        object Memo11: TfrxMemoView
+          Align = baLeft
+          Left = 631.181510000000000000
+          Width = 79.370130000000000000
+          Height = 18.897650000000000000
+          DataSet = frxItens
+          DataSetName = 'dbItens'
+          DisplayFormat.FormatStr = '%2.2f'
+          DisplayFormat.Kind = fkNumeric
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = []
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            '[dbItens."VL_DESCONTO"]')
+          ParentFont = False
         end
       end
-      object Line1: TfrxLineView
-        Left = 151.960730000000000000
-        Top = 404.409710000000000000
-        Width = 347.716760000000000000
-        Color = clBlack
-        Frame.Typ = [ftTop]
+      object PageFooter1: TfrxPageFooter
+        FillType = ftBrush
+        Height = 52.913420000000000000
+        Top = 453.543600000000000000
+        Width = 718.110700000000000000
+        object Memo9: TfrxMemoView
+          Left = 124.724490000000000000
+          Top = 18.897650000000000000
+          Width = 461.102660000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'Recebi os Produtos acima listados')
+          ParentFont = False
+        end
+        object Line1: TfrxLineView
+          Left = 22.677180000000000000
+          Top = 7.559060000000000000
+          Width = 657.638220000000000000
+          Color = clBlack
+          Diagonal = True
+        end
+      end
+      object Footer1: TfrxFooter
+        FillType = ftBrush
+        Height = 22.677180000000000000
+        Top = 370.393940000000000000
+        Width = 718.110700000000000000
+        object Memo1: TfrxMemoView
+          Align = baLeft
+          Left = 551.811380000000000000
+          Width = 158.740260000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            
+              'R$ [SUM(<dbItens."VL_TOTAL">,MasterData1)-SUM(<dbItens."VL_desco' +
+              'nto">,MasterData1)]')
+          ParentFont = False
+        end
+        object Memo8: TfrxMemoView
+          Align = baLeft
+          Width = 487.559370000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'Total:')
+          ParentFont = False
+        end
+        object Memo10: TfrxMemoView
+          Align = baLeft
+          Left = 487.559370000000000000
+          Width = 64.252010000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            '[SUM(<dbItens."qde">,MasterData1)]')
+          ParentFont = False
+        end
+      end
+      object PageHeader1: TfrxPageHeader
+        FillType = ftBrush
+        Height = 26.456710000000000000
+        Top = 241.889920000000000000
+        Width = 718.110700000000000000
+        object Memo2: TfrxMemoView
+          Align = baLeft
+          Top = 7.559060000000000000
+          Width = 49.133890000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          Memo.UTF8W = (
+            'Item')
+          ParentFont = False
+        end
+        object Memo3: TfrxMemoView
+          Align = baLeft
+          Left = 49.133890000000000000
+          Top = 7.559060000000000000
+          Width = 309.921460000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          Memo.UTF8W = (
+            'Descri'#231#227'o')
+          ParentFont = False
+        end
+        object Memo4: TfrxMemoView
+          Align = baLeft
+          Left = 359.055350000000000000
+          Top = 7.559060000000000000
+          Width = 37.795300000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'UN')
+          ParentFont = False
+        end
+        object Memo6: TfrxMemoView
+          Align = baLeft
+          Left = 396.850650000000000000
+          Top = 7.559060000000000000
+          Width = 90.708720000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          Memo.UTF8W = (
+            'Valor Unitario')
+          ParentFont = False
+        end
+        object Memo5: TfrxMemoView
+          Align = baLeft
+          Left = 487.559370000000000000
+          Top = 7.559060000000000000
+          Width = 64.252010000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'Qde')
+          ParentFont = False
+        end
+        object Memo7: TfrxMemoView
+          Align = baLeft
+          Left = 551.811380000000000000
+          Top = 7.559060000000000000
+          Width = 79.370130000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'Valor Total')
+          ParentFont = False
+        end
+        object Memo12: TfrxMemoView
+          Align = baLeft
+          Left = 631.181510000000000000
+          Top = 7.559060000000000000
+          Width = 79.370130000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = [ftLeft, ftRight, ftTop, ftBottom]
+          HAlign = haCenter
+          Memo.UTF8W = (
+            'Desconto')
+          ParentFont = False
+        end
       end
     end
   end
@@ -1427,7 +2367,299 @@ object FmRelatorio: TFmRelatorio
       'status=status')
     DataSet = DM.QrFatura
     BCDToCurrency = False
-    Left = 614
-    Top = 195
+    Left = 830
+    Top = 283
+  end
+  object frxSaidaProdutos: TfrxDBDataset
+    UserName = 'dbSaidaProdutos'
+    CloseDataSource = False
+    FieldAliases.Strings = (
+      'cabecalho=cabecalho'
+      'venda=venda'
+      'data_venda=data_venda'
+      'DESCRICAO=DESCRICAO'
+      'ID_PROD=ID_PROD'
+      'un=un'
+      'Qde=qde'
+      'valor=valor')
+    BCDToCurrency = False
+    Left = 816
+    Top = 225
+  end
+  object frxChartObject1: TfrxChartObject
+    Left = 944
+    Top = 296
+  end
+  object frxPDFExport1: TfrxPDFExport
+    UseFileCache = True
+    ShowProgress = True
+    OverwritePrompt = False
+    CreationTime = 43841.014618263890000000
+    DataOnly = False
+    PrintOptimized = False
+    Outline = False
+    Background = False
+    HTMLTags = True
+    Quality = 95
+    Transparency = False
+    Author = 'FastReport'
+    Subject = 'FastReport PDF export'
+    ProtectionFlags = [ePrint, eModify, eCopy, eAnnot]
+    HideToolbar = False
+    HideMenubar = False
+    HideWindowUI = False
+    FitWindow = False
+    CenterWindow = False
+    PrintScaling = False
+    PdfA = False
+    Left = 950
+    Top = 251
+  end
+  object frxHTMLExport1: TfrxHTMLExport
+    UseFileCache = True
+    ShowProgress = True
+    OverwritePrompt = False
+    DataOnly = False
+    FixedWidth = True
+    Background = False
+    Centered = False
+    EmptyLines = True
+    Print = False
+    PictureType = gpPNG
+    Left = 942
+    Top = 355
+  end
+  object frxDotMatrixExport1: TfrxDotMatrixExport
+    UseFileCache = True
+    ShowProgress = True
+    OverwritePrompt = False
+    DataOnly = False
+    EscModel = 0
+    GraphicFrames = False
+    SaveToFile = False
+    UseIniSettings = True
+    Left = 942
+    Top = 419
+  end
+  object DsprocuraProduto: TDataSource
+    DataSet = DM.QrProdutos
+    Left = 630
+    Top = 147
+  end
+  object dsItens: TDataSource
+    DataSet = DM.QrItens
+    Left = 504
+    Top = 154
+  end
+  object frxItens: TfrxDBDataset
+    UserName = 'dbItens'
+    CloseDataSource = False
+    FieldAliases.Strings = (
+      'CDBARR=CDBARR'
+      'ICMS=ICMS'
+      'ID_VENDA=id_venda'
+      'ID_PROD=ID_PROD'
+      'VL_UN=VL_UN'
+      'QDE=qde'
+      'VL_TOTAL=VL_TOTAL'
+      'COD_IT=COD_IT'
+      'DESCRICAO=DESCRICAO'
+      'UN=un'
+      'Ncm=Ncm'
+      'VL_DESCONTO=VL_DESCONTO')
+    DataSet = DM.QrItens
+    BCDToCurrency = False
+    Left = 824
+    Top = 393
+  end
+  object frxVendaA4: TfrxDBDataset
+    UserName = 'dbVendaA4'
+    CloseDataSource = False
+    FieldAliases.Strings = (
+      '@Emitente=@Emitente'
+      '@Logradouro=@Logradouro'
+      '@cidade=@cidade'
+      'venda=venda'
+      'data_venda=data_venda'
+      'nome_razao=nome_razao')
+    BCDToCurrency = False
+    Left = 824
+    Top = 337
+  end
+  object QrVendaA4: TFDQuery
+    SQL.Strings = (
+      'SET @Emitente = '#39'Francisco inform'#225'tica'#39';'
+      'SET @Logradouro = '#39'Rua Firmo Cunha 925, bairro de Fatima'#39';'
+      'SET @cidade='#39'Jose de Freitas - PI'#39';'
+      
+        'SELECT @Emitente,@Logradouro,@cidade,  v.id AS venda,v.data_vend' +
+        'a,c.nome_razao FROM'
+      'venda AS v LEFT JOIN cliente AS c'
+      'ON v.ID_CLIENTE = c.ID'
+      'WHERE v.ID=40')
+    Left = 438
+    Top = 163
+  end
+  object QrVendaTerminal: TFDQuery
+    SQL.Strings = (
+      'select * from venda where id=307')
+    Left = 600
+    Top = 232
+    object QrVendaTerminalID: TFDAutoIncField
+      FieldName = 'ID'
+      Origin = 'ID'
+      ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
+    end
+    object QrVendaTerminalID_CLIENTE: TIntegerField
+      FieldName = 'ID_CLIENTE'
+      Origin = 'ID_CLIENTE'
+      Required = True
+    end
+    object QrVendaTerminalDATA_VENDA: TSQLTimeStampField
+      AutoGenerateValue = arDefault
+      FieldName = 'DATA_VENDA'
+      Origin = 'DATA_VENDA'
+    end
+    object QrVendaTerminalid_empresa: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'id_empresa'
+      Origin = 'id_empresa'
+    end
+    object QrVendaTerminalPAG_CARTAO: TFloatField
+      AutoGenerateValue = arDefault
+      FieldName = 'PAG_CARTAO'
+      Origin = 'PAG_CARTAO'
+    end
+    object QrVendaTerminalPAG_DINHEIRO: TFloatField
+      AutoGenerateValue = arDefault
+      FieldName = 'PAG_DINHEIRO'
+      Origin = 'PAG_DINHEIRO'
+    end
+    object QrVendaTerminalTOTAL: TFloatField
+      AutoGenerateValue = arDefault
+      FieldName = 'TOTAL'
+      Origin = 'TOTAL'
+    end
+    object QrVendaTerminalN_NOTA: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'N_NOTA'
+      Origin = 'N_NOTA'
+    end
+    object QrVendaTerminalPAG_FIADO: TFloatField
+      AutoGenerateValue = arDefault
+      FieldName = 'PAG_FIADO'
+      Origin = 'PAG_FIADO'
+    end
+    object QrVendaTerminalOP_CAIXA_ID: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'OP_CAIXA_ID'
+      Origin = 'OP_CAIXA_ID'
+    end
+    object QrVendaTerminalTERMINAL: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'TERMINAL'
+      Origin = 'TERMINAL'
+    end
+    object QrVendaTerminalID_CAIXA: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'ID_CAIXA'
+      Origin = 'ID_CAIXA'
+    end
+    object QrVendaTerminalFISCAL_PREVENDA: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'FISCAL_PREVENDA'
+      Origin = 'FISCAL_PREVENDA'
+    end
+    object QrVendaTerminalid_vendedor: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'id_vendedor'
+      Origin = 'id_vendedor'
+    end
+  end
+  object DsVendaTerminal: TDataSource
+    DataSet = QrVendaTerminal
+    Left = 342
+    Top = 243
+  end
+  object frxVendaTerminal: TfrxDBDataset
+    UserName = 'dbVendaTerminal'
+    CloseDataSource = False
+    FieldAliases.Strings = (
+      'ID=ID'
+      'ID_CLIENTE=ID_CLIENTE'
+      'DATA_VENDA=DATA_VENDA'
+      'id_empresa=id_empresa'
+      'PAG_CARTAO=PAG_CARTAO'
+      'PAG_DINHEIRO=PAG_DINHEIRO'
+      'TOTAL=TOTAL'
+      'N_NOTA=N_NOTA'
+      'PAG_FIADO=PAG_FIADO'
+      'OP_CAIXA_ID=OP_CAIXA_ID'
+      'TERMINAL=TERMINAL'
+      'ID_CAIXA=ID_CAIXA'
+      'FISCAL_PREVENDA=FISCAL_PREVENDA'
+      'id_vendedor=id_vendedor')
+    DataSet = QrVendaTerminal
+    BCDToCurrency = False
+    Left = 832
+    Top = 449
+  end
+  object frxCliente: TfrxDBDataset
+    UserName = 'dbCliente'
+    CloseDataSource = False
+    FieldAliases.Strings = (
+      'ID=ID'
+      'TP_PESSOA=TP_PESSOA'
+      'FONE=FONE'
+      'CEP=CEP'
+      'LOGRADOURO=LOGRADOURO'
+      'NUMERO=NUMERO'
+      'BAIRRO=BAIRRO'
+      'COD_MUNICIPIO=COD_MUNICIPIO'
+      'UF=UF'
+      'NOME_RAZAO=NOME_RAZAO'
+      'MUNICIPIO=MUNICIPIO'
+      'CPF_CNPJ=CPF_CNPJ'
+      'RG_IE=RG_IE'
+      'DIVIDA_ATUAL=DIVIDA_ATUAL'
+      'LIMITE_CREDITO=LIMITE_CREDITO'
+      'APELIDO_FANTASIA=APELIDO_FANTASIA')
+    DataSet = DM.QrCliente
+    BCDToCurrency = False
+    Left = 744
+    Top = 409
+  end
+  object frxEmpresa: TfrxDBDataset
+    UserName = 'dbEmpresa'
+    CloseDataSource = False
+    FieldAliases.Strings = (
+      'ID=ID'
+      'CNPJ=CNPJ'
+      'IE=IE'
+      'RAZAO_SOCIAL=RAZAO_SOCIAL'
+      'FANTASIA=FANTASIA'
+      'FONE=FONE'
+      'CEP=CEP'
+      'LOGRADOURO=LOGRADOURO'
+      'NUMERO=NUMERO'
+      'COMPLEMENTO=COMPLEMENTO'
+      'BAIRRO=BAIRRO'
+      'COD_CIDADE=COD_CIDADE'
+      'NOME_CIDADE=NOME_CIDADE'
+      'UF=UF'
+      'COD_PAIS=COD_PAIS'
+      'NOME_PAIS=NOME_PAIS'
+      'REGIME_FISCAL=REGIME_FISCAL')
+    BCDToCurrency = False
+    Left = 752
+    Top = 361
+  end
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 250
+    OnTimer = Timer1Timer
+    Left = 574
+    Top = 331
   end
 end

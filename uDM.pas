@@ -86,6 +86,7 @@ type
     QrFaturaID_VENDA: TIntegerField;
     QrFaturaSTATUS: TIntegerField;
     QrFaturaJuros: TStringField;
+    QrSaida_Produtos: TFDQuery;
     procedure QrItensQDEGetText(Sender: TField; var Text: string;
       DisplayText: Boolean);
     procedure ProcessoParalelo(procedimento : TProc);
@@ -102,11 +103,13 @@ type
     function ConectaAoBanco: boolean;
     procedure ProcuraFatura(CondicaoSQl : string);
     procedure CalcularFaturaTotaleJuros(out Total, TotalJuros: currency);
+    procedure QrItensAfterScroll(DataSet: TDataSet);
 
 
   private
     { Private declarations }
   public
+  valorFaturaRecebido : currency;
     { Public declarations }
    // procedure VerificaWebService;
   end;
@@ -117,7 +120,7 @@ var
   User_id,User_nome, User_permissao : string;
   Empresa_id : integer;
   Terminal,idCaixa : integer;
-
+  var idVendaTerminal,idVendedor : integer;
   const sqlMesa = 'select '+
 ' M.MESA,M.ID_VENDA AS VENDA,'+
 ' M.ABERTURA,M.FECHAMENTO,'+
@@ -150,7 +153,7 @@ implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
-uses  LibConfigNFE, LibPluginRamo;
+uses  LibConfigNFE, LibPluginRamo, uRelatorioVendas;
 
 {$R *.dfm}
 
@@ -293,6 +296,22 @@ end;
 function TDM.ProviderCDS: TDataSetProvider;
 begin
 Result := TDataSetProvider.create(nil);
+end;
+
+procedure TDM.QrItensAfterScroll(DataSet: TDataSet);
+begin
+if not assigned(FmRelatorio) then  exit;
+with FmRelatorio do
+ begin
+ LbeQdeItens.Text   := QrItens.FieldByName('qde').AsString;
+ if QrItens.FieldByName('vl_desconto').AsCurrency>0 then
+ LbeDesconto_p.Text := FormatFloat('0.00',
+ (QrItens.FieldByName('vl_desconto').AsCurrency/QrItens.FieldByName('vl_total').AsCurrency )*100)
+ else  LbeDesconto_p.Text := '0,00';
+                        //100/ 10/2=5-->20
+ LbDescricaoItem.Caption := formatfloat('000',QrItens.FieldByName('cod_it').asinteger)+'-'+QrItens.FieldByName('descricao').AsString;
+ end;
+
 end;
 
 procedure TDM.QrItensQDEGetText(Sender: TField; var Text: string;

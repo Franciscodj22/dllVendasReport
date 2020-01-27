@@ -6,7 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ExtCtrls, Data.DB,
   Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Buttons,
-  Vcl.Samples.Spin, frxClass, frxDBSet, frxBarcode, Vcl.WinXCtrls;
+  Vcl.Samples.Spin, frxClass, frxDBSet, frxBarcode, Vcl.WinXCtrls, frxChart,
+  frxExportPDF, frxExportHTML, frxDMPExport, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
   
 type
   TFmRelatorio = class(TForm)
@@ -79,6 +83,65 @@ type
     Label9: TLabel;
     Panel4: TPanel;
     Panel6: TPanel;
+    frxSaidaProdutos: TfrxDBDataset;
+    frxChartObject1: TfrxChartObject;
+    frxPDFExport1: TfrxPDFExport;
+    frxHTMLExport1: TfrxHTMLExport;
+    frxDotMatrixExport1: TfrxDotMatrixExport;
+    TabSheet5: TTabSheet;
+    TabSheet6: TTabSheet;
+    Panel7: TPanel;
+    DBGProcuraProdutos: TDBGrid;
+    DsprocuraProduto: TDataSource;
+    Panel8: TPanel;
+    DBGrid4: TDBGrid;
+    Panel9: TPanel;
+    stTotalCompra: TStaticText;
+    stQdeVolumes: TStaticText;
+    StVendedor: TStaticText;
+    dsItens: TDataSource;
+    stVenda: TStaticText;
+    Panel10: TPanel;
+    sbxProcuraProduto: TSearchBox;
+    LbeQde: TLabeledEdit;
+    btnImprimirA4: TSpeedButton;
+    frxItens: TfrxDBDataset;
+    frxVendaA4: TfrxDBDataset;
+    QrVendaA4: TFDQuery;
+    Panel11: TPanel;
+    DbgCliente: TDBGrid;
+    SearchBox1: TSearchBox;
+    QrVendaTerminal: TFDQuery;
+    QrVendaTerminalID: TFDAutoIncField;
+    QrVendaTerminalID_CLIENTE: TIntegerField;
+    QrVendaTerminalDATA_VENDA: TSQLTimeStampField;
+    QrVendaTerminalid_empresa: TIntegerField;
+    QrVendaTerminalPAG_CARTAO: TFloatField;
+    QrVendaTerminalPAG_DINHEIRO: TFloatField;
+    QrVendaTerminalTOTAL: TFloatField;
+    QrVendaTerminalN_NOTA: TIntegerField;
+    QrVendaTerminalPAG_FIADO: TFloatField;
+    QrVendaTerminalOP_CAIXA_ID: TIntegerField;
+    QrVendaTerminalTERMINAL: TIntegerField;
+    QrVendaTerminalID_CAIXA: TIntegerField;
+    QrVendaTerminalFISCAL_PREVENDA: TIntegerField;
+    QrVendaTerminalid_vendedor: TIntegerField;
+    DsVendaTerminal: TDataSource;
+    BitBtn1: TBitBtn;
+    StaticText2: TStaticText;
+    StaticText3: TStaticText;
+    BtnImprimeOrcamento: TSpeedButton;
+    frxVendaTerminal: TfrxDBDataset;
+    frxCliente: TfrxDBDataset;
+    frxEmpresa: TfrxDBDataset;
+    Panel12: TPanel;
+    LbeDesconto_p: TLabeledEdit;
+    BtnAplicarDescotoQdeItens: TSpeedButton;
+    LbeQdeItens: TLabeledEdit;
+    LbDescricaoItem: TLabel;
+    Label10: TLabel;
+    Timer1: TTimer;
+    Panel13: TPanel;
     procedure pesquizarVenda;
     procedure FormCreate(Sender: TObject);
     procedure ChbxStatusClick(Sender: TObject);
@@ -100,12 +163,31 @@ type
     procedure lbeReceberFaturaKeyPress(Sender: TObject; var Key: Char);
     procedure Panel4Click(Sender: TObject);
     procedure Panel6Click(Sender: TObject);
+    procedure sbxProcuraProdutoInvokeSearch(Sender: TObject);
+    procedure DBGrid4DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGrid4CellClick(Column: TColumn);
+    procedure DBGProcuraProdutosDblClick(Sender: TObject);
+    procedure LbeQdeKeyPress(Sender: TObject; var Key: Char);
+    procedure btnImprimirA4Click(Sender: TObject);
+    procedure DbgClienteDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DbgClienteCellClick(Column: TColumn);
+    procedure SearchBox1InvokeSearch(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure BtnImprimeOrcamentoClick(Sender: TObject);
+    function PegarNomeVendedor(id_vendedor : integer):string;
+    procedure BtnAplicarDescotoQdeItensClick(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure lbeReceberFaturaChange(Sender: TObject);
+    procedure Panel13Click(Sender: TObject);
   private
     { Private declarations }
-
+   procedure ImprimeCarne(xid_Venda: integer);
   public
     { Public declarations }
-    
+     contaTempoCarneF12 : integer;
+    procedure ExibirItensVenda(idVenda:integer);
   end;
 
 var
@@ -125,14 +207,33 @@ uses uDM, LibConfigNFE;
 
 procedure TFmRelatorio.BtnImprimeCarneClick(Sender: TObject);
 begin
-//APPLICATION.MESSAGEBOX('Será selecionada a(s) Fatura(s) da ultima Venda','Atenção',64);
-dm.ProcuraFatura(' where f.id_venda='+Fatura_id_venda);
-frxFatura.DataSet := dm.QrFatura;
-frxReport1.LoadFromFile('Report\Carne002.fr3');
+ImprimeCarne(strtoint(Fatura_id_venda));
 
+end;
+
+procedure TFmRelatorio.BtnImprimeOrcamentoClick(Sender: TObject);
+begin
+// sttop.Caption := sttop.Caption+' - '+zArqIni.ReadString('EmpresaEmitente','id','1');
+if dm.QrItens.RecordCount=0 then raise Exception.Create('Nãohá tens na venda/orçamento');
+dm.QrCliente.Open('select * from cliente where id='+QrVendaTerminalID_CLIENTE.AsString);
+frxReport1.LoadFromFile('Report\Orcamento.fr3');
+ dm.QrEmpresa.Open('select * from nfe_empresa where id='+ZArqIni.ReadString('EmpresaEmitente','id','1'));
 frxReport1.PrepareReport();
 frxreport1.ShowReport;
+dm.QrCliente.Close;
+end;
 
+procedure TFmRelatorio.btnImprimirA4Click(Sender: TObject);
+var sql :string;
+begin
+
+sql := 'SET @Emitente = ''Francisco informática''; '+
+'SET @Logradouro = ''Rua Firmo Cunha 925, bairro de Fatima''; '+
+'SET @cidade=''Jose de Freitas - PI''; '+
+'SELECT @Emitente,@Logradouro,@cidade,  v.id AS venda,v.data_venda,c.nome_razao FROM '+
+'venda AS v LEFT JOIN cliente AS c '+
+'ON v.ID_CLIENTE = c.ID '+
+'WHERE v.ID='+dm.QrVenda.FieldByName('venda').Text;
 end;
 
 procedure TFmRelatorio.BtnImprimirVendaClick(Sender: TObject);
@@ -146,7 +247,7 @@ if (dm.QrNFCe.RecordCount=0)or(not FileExists(dm.QrNFCe.FieldByName('path_nota')
   raise Exception.Create('Nota Fiscal não encontrada');
   TRY
   L := tsTRINGlIST.Create;
-  l.Text :=  ImprimeNota(FmRelatorio.Handle,dm.QrNFCe.FieldByName('path_nota').Text{, ZArqIni.ReadString('impressao','impressora',''),TRUE} );
+  l.Text :=  pwchar(ImprimeNota(FmRelatorio.Handle,pwchar(dm.QrNFCe.FieldByName('path_nota').Text), pwchar(ZArqIni.ReadString('impressao','impressora','')),TRUE ));
   showmessage(l.Text);
   FINALLY
    l.Free;
@@ -180,6 +281,7 @@ if recebido>=TotalAPagar then//o recebido da pra pagar a fatura completa
  begin
  dm.ExecutaQuery('update fatura_cliente set status=1 where status=0 and id_cliente='+dm.QrFaturaID_CLIENTE.Text);
  StTroco.Caption := 'Troco: R$'+formatfloat('00.00',recebido-TotalAPagar);
+ dm.valorFaturaRecebido := TotalAPagar;
   end else //o recebido não da pra pagar a fatura completa
    begin
       Restante := Recebido;
@@ -204,6 +306,7 @@ if recebido>=TotalAPagar then//o recebido da pra pagar a fatura completa
     end;//fim  do loop
 
     dm.ExecutaQuery(SqlPagamentoParcial);
+    dm.valorFaturaRecebido := Recebido;
    end;
 
   BtnAtualizarvaloresFaturaClick(sender);
@@ -220,6 +323,89 @@ if TCheckBox(sender).Checked then
 cbxStatus.DroppedDown := cbxStatus.ItemIndex = -1;
 end;
 
+procedure TFmRelatorio.DbgClienteCellClick(Column: TColumn);
+begin
+if DbgCliente.datasource.dataset.recordcount=0 then exit;
+
+if Column.Title.Caption = 'Nova Venda' then
+ begin
+ QrVendaTerminal.Open('select * from venda where id<0');
+QrVendaTerminal.Insert;
+QrVendaTerminalID_CLIENTE.Value:= dm.QrCliente.FieldByName('id').AsInteger;
+QrVendaTerminalOP_CAIXA_ID.asstring := '0'+User_id;
+QrVendaTerminalID_VENDEDOR.Value :=idVendedor;
+QrVendaTerminalDATA_VENDA.AsDateTime := date+time;
+QrVendaTerminalid_empresa.value := 1;//Empresa_id;
+QrVendaTerminalID_CAIXA.Value := 0;//idCaixa;
+QrVendaTerminalTERMINAL.Value := Terminal;
+QrVendaTerminalTOTAL.Value := 0;
+QrVendaTerminal.Post;
+idVendaTerminal := QrVendaTerminalID.AsInteger;
+stVenda.Caption := 'Venda: '+ QrVendaTerminalID.AsString;
+StVendedor.Caption := 'Vendedor: '+idVendedor.tostring+' - '+PegarNomeVendedor(idVendedor);
+ PnCliente.Caption :='Cliente: '+dm.QrCliente.FieldByName('id').AsString+' - '+ dm.QrCliente.FieldByName('nome_razao').AsString;
+PageControl1.TabIndex := 4;
+sbxProcuraProduto.SetFocus;
+ end;
+end;
+
+procedure TFmRelatorio.DbgClienteDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+var button : integer;
+R: TRect;
+scapt : string;
+begin
+if TDBGrid(sender).datasource.dataset.recordcount=0 then exit;
+
+if Column.Title.Caption = 'Nova Venda' then
+    begin
+    TDBGrid(sender).Canvas.FillRect(Rect);
+    BUTTON := 0;
+    SCapt := 'Nova Venda'; //'Fechar' ;
+    R:=Rect;
+    InflateRect(R,-3,-2); //Diminue o tamanho do Botão
+    DrawFrameControl(TDBGrid(sender).Canvas.Handle,R,BUTTON, BUTTON or BUTTON);
+    with TDBGrid(Sender).Canvas do
+    begin
+      Brush.Style := bsClear;
+      Font.Color := clBtnText;
+      TextRect(Rect, (Rect.Left + Rect.Right - TextWidth(SCapt)) div 2, (Rect.Top + Rect.Bottom - TextHeight(SCapt)) div 2, SCapt);
+    end;
+  end;
+
+
+  TDBGrid(Sender).Canvas.FillRect(Rect);
+TDBGrid(Sender).DefaultDrawColumnCell(Rect,DataCol,Column,State);
+end;
+
+procedure TFmRelatorio.DBGProcuraProdutosDblClick(Sender: TObject);
+var
+Pro_ID, Cod_IT : string;
+desconto, preco,total,qde : currency;
+begin
+//showmessage('1');
+  if DBGProcuraProdutos.datasource.dataset.recordcount=0 then exit;
+if LbeQde.Text='' then LbeQde.Text :='1';
+ //showmessage('2');
+preco := dm.QrProdutos.FieldByName('preco_venda').AsCurrency;
+desconto := 0;
+qde := strtocurr(LbeQde.Text);
+total := preco*qde;
+Cod_IT := inttostr(dm.QrItens.RecordCount+1);
+Pro_ID := dm.QrProdutos.FieldByName('id').Text;
+      dm.ExecutaQuery('insert into itens(cod_it,id_venda,id_prod,vl_desconto,vl_un,qde,vl_total)'+
+              'values('+Cod_IT+','+inttostr(idVendaTerminal)+','+Pro_ID+','+dm.CurrToStrSQL(Desconto)+
+              ','+dm.CurrToStrSQL(preco)+','+dm.CurrToStrSQL(qde)+','+dm.CurrToStrSQL(total)+');');
+dm.FDCon.ExecSQL('update venda set '+
+' total= total+'+dm.CurrToStrSQL(Total)+
+' where id='+inttostr(idVendaTerminal));
+
+ LbeQde.Text :='';
+ sbxProcuraProduto.SelectAll;
+ application.ProcessMessages;
+ ExibirItensVenda(idVendaTerminal);
+end;
+
 procedure TFmRelatorio.DBGrid3CellClick(Column: TColumn);
 var aSQL : string;
 begin
@@ -234,6 +420,52 @@ aSQL := 'SET @JurosAoDia = 0.0033;-- = 0,099  ou seja 9,9% ao mes'+#13+
   ' WHERE fc.status=0 and fc.ID_CLIENTE=1';
 
 
+end;
+
+procedure TFmRelatorio.DBGrid4CellClick(Column: TColumn);
+var
+s: string;
+begin
+if DBGrid4.datasource.dataset.recordcount=0 then exit;
+
+if Column.Title.Caption = 'Remover' then
+    begin
+    s:= 'delete from itens where id='+dm.QrItens.FieldByName('id').Text+';'
+    +#13+'update venda set total=total-'+stringreplace(dm.QrItens.FieldByName('vl_total').Text,',','.',[])
+    +' where id='+inttostr(idVendaTerminal)+';';
+    dm.ExecutaQuery(s);
+    application.ProcessMessages;
+    ExibirItensVenda(idVendaTerminal);
+    end;
+end;
+
+procedure TFmRelatorio.DBGrid4DrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
+var button : integer;
+R: TRect;
+scapt : string;
+begin
+if TDBGrid(sender).datasource.dataset.recordcount=0 then exit;
+
+if Column.Title.Caption = 'Remover' then
+    begin
+    TDBGrid(sender).Canvas.FillRect(Rect);
+    BUTTON := 0;
+    SCapt := 'Remover'; //'Fechar' ;
+    R:=Rect;
+    InflateRect(R,-0,-0); //Diminue o tamanho do Botão
+    DrawFrameControl(TDBGrid(sender).Canvas.Handle,R,BUTTON, BUTTON or BUTTON);
+    with TDBGrid(Sender).Canvas do
+    begin
+      Brush.Style := bsClear;
+      Font.Color := clBtnText;
+      TextRect(Rect, (Rect.Left + Rect.Right - TextWidth(SCapt)) div 2, (Rect.Top + Rect.Bottom - TextHeight(SCapt)) div 2, SCapt);
+    end;
+  end;
+
+
+  TDBGrid(Sender).Canvas.FillRect(Rect);
+TDBGrid(Sender).DefaultDrawColumnCell(Rect,DataCol,Column,State);
 end;
 
 procedure TFmRelatorio.EdtValorEntradaChange(Sender: TObject);
@@ -263,13 +495,25 @@ end;
 procedure TFmRelatorio.FormCreate(Sender: TObject);
 begin
 if dm = nil then application.CreateForm(TDm, Dm);
+QrVendaA4.Connection := dm.FDCon;
+QrVendaTerminal.Connection := dm.FDCon;
+DbgCliente.DataSource := dm.DsCliente;
 cbxPrazo.ItemIndex := 2;//prazo de 30 dias
 PnCliente.Top := PageControl1.Top;
 PnCliente.Left := 4;
 PnCliente.Width := pnTop.Width;
+dsitens.dataset := dm.qritens;
+dsprocuraproduto.dataset := dm.qrprodutos;
 color := clNavy;
 DTinicio.Date := date;
 DtFim.DateTime := date+TTime(StrToTime('23:59:59'));
+frxFatura.DataSet := dm.QrFatura;
+frxSaidaProdutos.DataSet := dm.QrSaida_Produtos;
+ //frxVendaA4.DataSet := QrVendaA4;
+ frxItens.DataSet := dm.QrItens;
+ frxVendaTerminal.DataSet := QrVendaTerminal;
+ frxcliente.DataSet := dm.QrCliente;
+ frxEmpresa.DataSet := dm.QrEmpresa;
 
 end;
 
@@ -279,6 +523,38 @@ begin
 if key = vk_F12 then
 if Fatura_Valor>0 then 
  btnCriarCarneClick(sender);
+
+end;
+
+procedure TFmRelatorio.ImprimeCarne(xid_Venda: integer);
+begin
+//APPLICATION.MESSAGEBOX('Será selecionada a(s) Fatura(s) da ultima Venda','Atenção',64);
+dm.ProcuraFatura(' where f.id_venda='+xid_Venda.ToString {Fatura_id_venda});
+frxFatura.DataSet := dm.QrFatura;
+ dm.QrEmpresa.Open('select * from nfe_empresa where id='+ZArqIni.ReadString('EmpresaEmitente','id','1'));
+frxReport1.LoadFromFile('Report\Carne002.fr3');
+
+frxReport1.PrepareReport();
+frxreport1.ShowReport;
+end;
+
+procedure TFmRelatorio.LbeQdeKeyPress(Sender: TObject; var Key: Char);
+begin
+if not(key in['0'..'9',#13,#27,#8,',']) then key := #0;
+
+end;
+
+procedure TFmRelatorio.lbeReceberFaturaChange(Sender: TObject);
+var
+recebido,TotalAPagar: currency;
+begin
+if TEdit(sender).Text='' then exit;
+Recebido := dm.StrToCurrSemPonto('0'+TEdit(sender).Text);
+TotalAPagar := dm.StrToCurrSemPonto(stringreplace(trim(StTotalFaturaBruto.Caption),'R$','',[]));
+
+ if Recebido>TotalAPagar then
+StTroco.Caption := 'Troco: R$'+formatfloat('0.00',recebido-TotalAPagar)
+else StTroco.Caption := 'Troco: R$0,00';
 
 end;
 
@@ -296,6 +572,11 @@ begin
 close;
 end;
 
+procedure TFmRelatorio.Panel13Click(Sender: TObject);
+begin
+ImprimeCarne(dm.QrFaturaID_VENDA.Value);
+end;
+
 procedure TFmRelatorio.Panel4Click(Sender: TObject);
 begin
 BtnAtualizarvaloresFaturaClick(sender);
@@ -304,6 +585,16 @@ end;
 procedure TFmRelatorio.Panel6Click(Sender: TObject);
 begin
 BtnReceberFaturaClick(sender);
+end;
+
+function TFmRelatorio.PegarNomeVendedor(id_vendedor: integer): string;
+begin
+
+dm.FDQuery.Open('SELECT p.nome_razao, p.id AS id_pessoa,v.id AS id_vendedor FROM '+#13+
+'pessoa AS p RIGHT JOIN vendedor AS v '+#13+
+'ON p.id = v.id_pessoa where v.id='+id_vendedor.ToString);
+Result := dm.FDQuery.FieldByName('nome_razao').AsString;
+dm.FDQuery.Close;
 end;
 
 procedure TFmRelatorio.pesquizarVenda;
@@ -354,11 +645,72 @@ if (dm.QrNFCe.RecordCount=0)or(not FileExists(dm.QrNFCe.FieldByName('path_nota')
   StInformacao.Caption := 'Consultando...';
   application.ProcessMessages;
   l := tStringList.Create;
-    l.Text := ConsultaDanfe(dm.QrNFCe.FieldByName('path_nota').Text);
+    l.Text := ConsultaDanfe(pwchar(dm.QrNFCe.FieldByName('path_nota').Text));
     PnCliente.Caption := 'NFCe: '+dm.QrNFCe.FieldByName('n_nfce').Text+' | Status: '+l.Values['xMotivo']+
     ' | Protocolo: '+l.Values['Protocolo'];
     showmessage(l.Text);
     PageControl1.TabIndex := 0;
+end;
+
+procedure TFmRelatorio.ExibirItensVenda(idVenda:integer);
+var
+nSQL: string;
+begin
+
+nSQL:=
+'select '+#13+
+' v.total as Total_Venda,I.ID_PROD,i.id_venda,i.id,i.cod_it ,p.CD_BARR,p.DESCRICAO,p.UN,i.vl_un,i.QDE,'+#13+
+' i.vl_total ,i.vl_desconto, '+#13+
+'p.ncm_ as ncm,p.icms'+#13+
+' from itens as i inner join produtos as p '+ #13+
+' on i.id_prod = p.id '+ #13+
+' inner join venda as v on i.id_venda = v.id ';
+dm.QrItens.Open(nSQL+
+' where i.id_venda='+inttostr(idVenda)+
+' ORDER BY I.ID ');
+dm.FDQuery.Open(' SET @venda='+inttostr(idVenda)+';SELECT((SELECT SUM(vl_total) FROM itens WHERE id_venda=@venda)-(SELECT SUM(vl_desconto)'
++' FROM itens WHERE id_venda=@venda))AS total_venda;');
+stTotalCompra.Caption := formatfloat('0.00', dm.FDQuery.FieldByName('Total_Venda').AsCurrency);
+stQdeVolumes.Caption :=  inttostr(dm.QrItens.RecordCount);
+end;
+
+procedure TFmRelatorio.BitBtn1Click(Sender: TObject);
+var
+aIdVenda : integer;
+s : string;
+  I: Integer;
+begin
+if not InputQuery('Informe o ID da Venda','Venda: ',s) then  exit;
+for I := 1 to length(s) do
+if not(s[i] in ['0'..'9']) then raise Exception.Create('Informe um ID numerico válido');
+
+aIdVenda := strtoint(s);
+stVenda.Caption := 'Venda: '+s;
+ExibirItensVenda(aIdVenda);
+end;
+
+procedure TFmRelatorio.BtnAplicarDescotoQdeItensClick(Sender: TObject);
+label Finalizar;
+var desconto : currency;
+begin
+if dm.QrItens.RecordCount=0 then exit;
+
+if (trim(LbeQdeItens.Text)='')or(StrToCurrDef(LbeQdeItens.Text,0)<=0) then
+   begin
+   application.MessageBox('A Quantidade nao pode ser igual ou menor que zero','Alterar Quantidade',16);
+   goto Finalizar;
+   end;
+if (StrToCurrDef(LbeDesconto_p.Text,0)<0) then
+  begin
+   application.MessageBox('O Desconto nao pode ser menor que zero','Desconto',16);
+   goto Finalizar;
+   end;
+
+dm.FDCon.ExecSQL('update itens set qde='+StringReplace(LbeQdeItens.Text,',','.',[])+',vl_desconto=format(vl_total*'+
+StringReplace(LbeDesconto_p.Text,',','.',[])+'/100,2), vl_total=format(vl_un*'+StringReplace(LbeQdeItens.Text,',','.',[])
++',2) where id='+dm.QrItens.FieldByName('id').Text);
+Finalizar:
+ExibirItensVenda(idVendaTerminal);
 end;
 
 procedure TFmRelatorio.BtnAtualizarvaloresFaturaClick(Sender: TObject);
@@ -373,6 +725,69 @@ StTotalFaturaBruto.Caption := formatfloat('0.00',tjuros+vTotal);
  lbeReceberFatura.Clear;
 end;
 
+procedure TFmRelatorio.sbxProcuraProdutoInvokeSearch(Sender: TObject);
+var
+i : integer;
+ModoPesq,aMSG : string;
+
+label Alfabetico, GoSQL;
+begin
+if TEdit(sender).Text = '' then exit;
+TEdit(sender).SelectAll;
+
+    for I := 1 to LENGTH(TEdit(sender).Text) do
+    if (lowercase(TEdit(sender).Text)[I] IN ['a'..'z',' ']) then GOTO ALFABETICO;
+
+        begin
+       ModoPesq := ' cd_barr=''' + FormatFloat('0', strtofloat(TEdit(sender).Text)) + '''';
+
+        self.Tag := 0;
+        goto goSQL;
+        end;
+
+    alfabetico:
+       begin
+      ModoPesq := ' DESCRICAO LIKE ''%' + TEdit(sender).Text + '%'' ORDER BY DESCRICAO';
+
+      self.Tag := 1;
+    goto goSQL;
+       end;
+
+    goSQL:
+    dm.QrProdutos.open('select * from PRODUTOS where ' + ModoPesq);
+     // showmessage('ee: '+dm.QrProdutos.FieldByName('descricao').Text);
+    // Animar := true;
+    if dm.QrProdutos.RecordCount=0 then
+    begin
+   // MostraMensagem('','Produto Não Localizado...',5);
+    aMSG:= 'Produto não encontrado';
+            //stPreco.Caption := '';
+             dm.QrProdutos.Close;
+    end else begin
+            // stDescricaoProd.Caption := dm.QrProdutos.FieldByName('id').Text+' | '+dm.QrProdutos.FieldByName('descricao').Text;
+                   //  stPreco.Caption := 'R$ '+FormatFloat('0.00',dm.QrProdutos.FieldByName('preco_venda').ascurrency);
+             end;
+
+end;
+
+procedure TFmRelatorio.SearchBox1InvokeSearch(Sender: TObject);
+var
+s: string;
+i : integer;
+begin
+ if SearchBox1.Text='' then raise Exception.Create('Digite o CODIGO ou o NOME da PESSOA');
+ s := 'p.ID = '+SearchBox1.Text;
+
+ for I := 1 to length(SearchBox1.Text) do
+if not (SearchBox1.Text[i] in['0'..'9']) then
+  begin //descricao
+  s := 'P.nome_razao like ''%'+SearchBox1.Text+'%''';
+  break;
+  end;
+
+   dm.QrCliente.Open('select * from pessoa as p where '+s);
+end;
+
 procedure TFmRelatorio.SpeedButton2Click(Sender: TObject);
 var
 DiaDaSemana : Array of string;
@@ -381,6 +796,18 @@ begin
 DiaDaSemana := ['Domingo','Segunda','Terça','Quarta', 'Quinta','Sexta','Sábado'];
 x := DayOfWeek(date);
 showmessage(inttostr(x)+' - '+DiaDaSemana[x]);
+end;
+
+procedure TFmRelatorio.Timer1Timer(Sender: TObject);
+begin
+inc(contaTempoCarneF12);
+if contaTempoCarneF12>1 then
+ begin
+ btnCriarCarneClick(sender);
+ contaTempoCarneF12 := 0;
+ timer1.Enabled := false;
+ end;
+
 end;
 
 procedure TFmRelatorio.btnCriarCarneClick(Sender: TObject);
